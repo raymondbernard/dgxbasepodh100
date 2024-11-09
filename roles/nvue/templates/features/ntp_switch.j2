@@ -1,0 +1,21 @@
+      ntp:
+        mgmt:
+{% if ntp.server_ips is defined %}
+          server:
+{% for ip in ntp.server_ips %}
+            {{ ip }}:
+              iburst: on
+{% endfor %}
+{% else %}
+      ntp:
+        mgmt:
+          server:
+            0.cumulusnetworks.pool.ntp.org:
+              iburst: on
+            1.cumulusnetworks.pool.ntp.org:
+              iburst: on
+            2.cumulusnetworks.pool.ntp.org:
+              iburst: on
+            3.cumulusnetworks.pool.ntp.org:
+              iburst: on
+{% endif %}

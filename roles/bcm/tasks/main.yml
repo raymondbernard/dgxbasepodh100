@@ -1,0 +1,49 @@
+---
+- name: Package installs
+  apt:
+    pkg:
+      - lldpd
+      - net-tools
+      - traceroute
+#      - ifupdown2
+      - chrony
+    state: present
+
+# - name: Force all notified handlers to run at this point, not waiting for normal sync points
+#   meta: flush_handlers
+
+- name: Copy rp_filter configuration to sysctl.conf
+  copy:
+    src: sysctl.conf
+    dest: /etc/sysctl.conf
+    mode: 0644
+  notify: restart sysctl
+
+### make sure to edit both dest files accoeding to the dgx netplan yaml files (e.g. 01-netcfg.yaml)
+- name: Push mgmt_interface config to mgmt node
+  template:
+    src: mgmt_interface.j2
+    dest: /etc/netplan/config.yaml
+    mode: 0644
+  notify: netplan apply
+
+- name: Push inband_mgmt_ports config to mgmt node
+  template:
+    src: inband_mgmt_ports.j2
+    dest: /etc/netplan/inband_mgmt_ports.yaml
+    mode: 0644
+  notify: netplan apply
+
+- name: Copy IP addresses list for testing
+  copy:
+    src: ip_addresses.txt
+    dest: /home/ubuntu
+    mode: 0644
+  when: inventory_hostname == "bcm01"
+
+- name: Copy ping test script testing
+  copy:
+    src: ping_test.sh
+    dest: /home/ubuntu
+    mode: 0777
+  when: inventory_hostname == "bcm01"

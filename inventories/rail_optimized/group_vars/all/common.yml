@@ -1,0 +1,24 @@
+---
+fabric_name: BasePOD H100 Rail-Optimized
+bgp_asn_prefix: 651
+id: 9999
+vxlan_local_loopback: "10.10.10.{{ id }}/32" ## id is based on SU#SW# eg 11 for leaf01 su01 
+#vxlan_anycast_loopback: "10.0.1.{{ vxlan_anycast_id | default( id ) }}/32"
+#mlag_sysmac_prefix: 44:38:39:BE:EF
+evpn_mh_sysmac_prefix: 44:38:39:BE:EF
+eth0_subnet: 192.168.200.0/24
+eth0_ip: "{{ eth0_subnet | nthhost( eth0_id | default( id ) ) }}/{{ eth0_subnet | ipaddr('prefix') }}"
+eth0_ip_snmp: "{{ eth0_subnet | nthhost( eth0_id | default( id ) ) }}"
+vx_version: 5.5
+sw_interconnect_underlay_subnet_prefix: 172.16.1
+## dgx related IP info
+inband_subnets_summary_route: 10.130.0.0/16
+inband_mgmt_and_storage_subnet_prefix: 10.130.122
+inband_mgmt_and_storage_subnet_summary_route: "{{ inband_mgmt_and_storage_subnet_prefix }}.0/24"
+edge_subnet_prefix: 10.140.0
+edge_subnet_summary_route: "{{ edge_subnet_prefix }}.0/24"
+gpu_subnets_perfix: 10.1.1 ## full ip address examples 10.1.1.0/31, 10.4.3.0/31
+gpu_subnets_summary_route: "{{ gpu_subnets_perfix }}.0/24"
+#externatl_edge_subnets_prefix: 10.140.
+ipmi_leaf_subnet_prefix: 10.150.0
+ipmi_leaf_subnet_prefix_summary_route: "{{ ipmi_leaf_subnet_prefix }}.0/24"

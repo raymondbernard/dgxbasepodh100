@@ -1,0 +1,26 @@
+{% for interface in interfaces|default() %}
+      {{ interface.name }}:
+        link:
+          state:
+            up: {}
+        type: swp
+{% if interface.bridge is defined %}
+        bridge:
+          domain:
+            br_default:
+              access: {{  interface.bridge.access }}
+{%  endif %}
+{% if interface.evpn_mh_uplink|default() %}
+        evpn:
+          multihoming:
+            uplink: on
+{%  endif %}
+{% if interface.ip is defined %}
+        ip:
+          address:
+            {{ interface.ip }}: {}
+{%  endif %}
+{% if interface.vrf is defined %}
+          vrf: {{ interface.vrf }}
+{%  endif %}
+{%-   endfor %}

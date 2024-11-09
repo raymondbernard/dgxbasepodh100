@@ -1,0 +1,29 @@
+- name: Drop ipmi01 config yaml
+  copy:
+    src: startup-ipmi01.yaml
+    dest: /etc/nvue.d/startup.yaml
+    owner: nvue
+    group: nvue
+    mode: 0644
+  when: inventory_hostname == "ipmi01"
+
+- name: Drop ipmi02 config yaml
+  copy:
+    src: startup-ipmi02.yaml
+    dest: /etc/nvue.d/startup.yaml
+    owner: nvue
+    group: nvue
+    mode: 0644
+  when: inventory_hostname == "ipmi02"
+
+- name: nvue config replace
+  ansible.builtin.shell: nv config replace /etc/nvue.d/startup.yaml
+
+- name: nvue config apply
+  ansible.builtin.shell: nv config apply -y
+
+- name: nvue config save
+  ansible.builtin.shell: nv config save
+
+- name: Force all notified handlers to run at this point, not waiting for normal syn$
+  meta: flush_handlers

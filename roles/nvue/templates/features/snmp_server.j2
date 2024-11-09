@@ -1,0 +1,11 @@
+      snmp-server:
+        enable: on
+        listening-address:
+{% for address in snmp_server.listening_address %}
+          {{ address }}:
+            vrf: {{ snmp_server.vrf }}
+{% endfor %}
+        readonly-community:
+          {{ snmp_server.rocommunity }}:
+            access:
+              {{ snmp_server.rocommunity_access }}: {}

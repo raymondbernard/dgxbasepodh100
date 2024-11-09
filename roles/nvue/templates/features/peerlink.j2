@@ -1,0 +1,14 @@
+      peerlink:
+        bond:
+          member:
+{% for interface in mlag.peerlinks %}
+            {{ interface }}: {}
+{% endfor %}
+        type: peerlink
+        bridge:
+          domain:
+            br_default: {}
+      peerlink.4094:
+        type: sub
+        base-interface: peerlink
+        vlan: 4094

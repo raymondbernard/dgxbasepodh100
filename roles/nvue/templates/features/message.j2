@@ -1,0 +1,6 @@
+      message:
+{% if inventory_hostname in groups['leaf'] %}
+        post-login: "#####################################################################################
+                \n#                  You are successfully logged in to: {{ inventory_hostname }}                        #
+                \n#####################################################################################"
+{% endif %}

@@ -1,0 +1,8 @@
+      syslog:
+        mgmt:
+{% if syslog.servers is defined %}
+          server:
+{% for ip in syslog.servers %}
+            {{ ip }}: {}           
+{% endfor %}
+{% endif %}

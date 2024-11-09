@@ -1,0 +1,18 @@
+---
+- hosts: all
+  user: cumulus
+  become: yes
+  become_method: sudo
+  tasks:
+  - name: Generate cl-support and store the name of the file
+    shell: /usr/cumulus/bin/cl-support | awk '{print $3}'
+    register: filename
+
+  - name: fetch the cl-support files
+    fetch: src={{ item }} dest=./ flat=yes
+    with_items: "{{ filename.stdout_lines }}"
+
+  - name: remove generated cl-support
+    shell: rm {{ item }}
+    with_items: "{{ filename.stdout_lines }}"
+

@@ -1,0 +1,12 @@
+    nve:
+      vxlan:
+        enable: on
+        source:
+          address: {{ loopback.vxlan_local_tunnel_ip }}
+{% if loopback.clag_vxlan_anycast_ip is defined %}
+        mlag:
+          shared-address: {{ loopback.clag_vxlan_anycast_ip }}
+        arp-nd-suppress: {{ bridge.arp_nd_suppress|default('on') }}
+{% else %}
+        arp-nd-suppress: {{ bridge.arp_nd_suppress|default('on') }}
+{% endif %}

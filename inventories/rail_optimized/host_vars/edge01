@@ -1,0 +1,72 @@
+---
+id: 6
+eth0_id: 6
+sysmac: AA
+vtep: true
+bgp_agg_route: "{{ sw_interconnect_underlay_subnet_prefix.pod01 }}.0.0/20"
+routing_policies: true
+prefix_list:
+  - name: dgx_subnet
+    type: ipv4
+    rules: 
+      - id: 10 
+        action: permit
+        match: "{{ gpu_subnets_summary_route }}"        
+        max_prefix_len: 31
+  - name: inband_subnetss
+    type: ipv4
+    rules: 
+      - id: 10 
+        action: permit
+        match: "{{ inband_subnetss_summary_route }}"        
+        max_prefix_len: 24
+      # - id: 20 
+      #   action: permit
+      #   match: "{{ vxlan_local_loopback }}"
+      #   max_prefix_len: 32
+route_map:
+  - name: dgx_subnets
+    rules: 
+      - id: 10 
+        description: permit_dgx_subnet 
+        action: permit
+        match: ip-prefix-list
+        match_param: dgx_subnet
+        type: ipv4
+  - name: inband_subnets
+    rules: 
+      - id: 10 
+        description: permit_dgx_subnet 
+        action: permit
+        match: ip-prefix-list
+        match_param: inband_subnetss
+        type: ipv4
+  - name: lo_subnet
+    rules: 
+      - id: 10 
+        description: permit_lo_subnet 
+        action: permit
+        match: interface
+        match_param: lo
+        type: ipv4
+graceful_restart:
+  mode: helper-only
+underlay_bfd:
+  detect_multiplier: 3
+  min_rx_interval: 300
+  min_tx_interval: 300
+overlay_bfd:
+  detect_multiplier: 3
+  min_rx_interval: 1000
+  min_tx_interval: 1000
+bgp_interfaces:  
+  swp1:
+    ip: "{{ sw_interconnect_underlay_subnet_prefix }}.0/31"
+    bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.1/31"
+    bgp_peer_int: swp45
+    bgp_neighbor: leaf02
+  swp2: 
+    ip: "{{ sw_interconnect_underlay_subnet_prefix }}.2/31"
+    bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.3/31"  
+    bgp_peer_int: swp46
+    bgp_neighbor: leaf02

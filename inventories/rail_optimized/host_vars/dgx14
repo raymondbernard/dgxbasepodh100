@@ -1,0 +1,52 @@
+---
+gpu_nics:
+  eth1:
+    ip: "{{ gpu_subnets_perfix }}.208/31"
+    route: 
+      dest: "{{ gpu_subnets_summary_route }}"
+      nexthop: "{{ hostvars['leaf01'].dgx_interfaces_ips.swp14s0 }}"
+  eth2:
+    ip: "{{ gpu_subnets_perfix }}.210/31"
+    route: 
+      dest: "{{ gpu_subnets_summary_route }}"
+      nexthop: "{{ hostvars['leaf02'].dgx_interfaces_ips.swp14s0 }}"
+  eth3:
+    ip: "{{ gpu_subnets_perfix }}.212/31"
+    route: 
+      dest: "{{ gpu_subnets_summary_route }}"
+      nexthop: "{{ hostvars['leaf01'].dgx_interfaces_ips.swp14s1 }}"
+  eth4:
+    ip: "{{ gpu_subnets_perfix }}.214/31"
+    route: 
+      dest: "{{ gpu_subnets_summary_route }}"
+      nexthop: "{{ hostvars['leaf02'].dgx_interfaces_ips.swp14s1 }}"
+  eth5:
+    ip: "{{ gpu_subnets_perfix }}.216/31"
+    route: 
+      dest: "{{ gpu_subnets_summary_route }}"
+      nexthop: "{{ hostvars['leaf01'].dgx_interfaces_ips.swp14s2 }}"
+  eth6:
+    ip: "{{ gpu_subnets_perfix }}.218/31"
+    route: 
+      dest: "{{ gpu_subnets_summary_route }}"
+      nexthop: "{{ hostvars['leaf02'].dgx_interfaces_ips.swp14s2 }}"
+  eth7:
+    ip: "{{ gpu_subnets_perfix }}.220/31"
+    route: 
+      dest: "{{ gpu_subnets_summary_route }}"
+      nexthop: "{{ hostvars['leaf01'].dgx_interfaces_ips.swp14s3 }}"
+  eth8:
+    ip: "{{ gpu_subnets_perfix }}.222/31"
+    route: 
+      dest: "{{ gpu_subnets_summary_route }}"
+      nexthop: "{{ hostvars['leaf02'].dgx_interfaces_ips.swp14s3 }}"
+inband_mgmt:
+  nics: [eth9, eth10]
+  bonds:
+    - name: bond0
+      mode: 802.3ad
+      rate: fast
+      ip: "{{ inband_mgmt_and_storage_subnet_prefix }}.18/24"
+ #    route: 
+ #      dest: "{{ gpu_subnets_summary_route }}"
+ #      nexthop: "{{ hostvars['leaf01'].dgx_interfaces_ips.swp1s0 }}"

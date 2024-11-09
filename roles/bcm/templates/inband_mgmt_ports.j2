@@ -1,0 +1,45 @@
+network:
+  renderer: networkd
+  ethernets:
+{% for nic in inbnad_nics %}
+    {{ nic }}:
+      addresses:
+        - {{ inbnad_nics[nic].ip }}
+      routes:
+{% for dest in inbnad_nics[nic].route.dest %}
+        - to: {{ dest }}
+          via: {{ inbnad_nics[nic].route.nexthop }}
+          metric: 1
+{% endfor %}
+{#
+      routing-policy:
+        - from: {{ mgmt_nics[nic].ip | ipaddr('address') }}
+          table: {{ mgmt_nics[nic].route.table }}
+#}
+      dhcp4: no
+{# #In case will need to match to MAC on the port and rename nic
+     match:
+              macaddress: {{ mgmt_nics[nic].mac }}
+      set-name: {{ nic }}
+#}
+{% endfor %}
+
+
+{# ADD ONLY IF BOND
+network:
+  renderer: networkd
+  ethernets:
+{% for nic in inband_mgmt.nics %}
+    {{ nic }}:
+      dhcp4: no
+{% endfor %}
+{% for bond in inband_mgmt.bonds %}
+  bonds:
+    {{ bond.name }}:
+      interfaces: [{{inband_mgmt.nics[0]}}, {{inband_mgmt.nics[1]}}]
+      parameters:
+        mode: {{ bond.mode}}
+        lacp-rate: {{ bond.rate}}
+      addresses: [{{ bond.ip}}]
+{% endfor %}
+#}

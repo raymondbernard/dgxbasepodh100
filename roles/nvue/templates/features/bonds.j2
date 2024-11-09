@@ -1,0 +1,60 @@
+{% for bond in bonds %}
+      {{ bond.name }}:
+        bond:
+          lacp-bypass: on
+          member:
+{%   for port in bond.ports %}
+            {{ port }}: {}
+{%   endfor %}
+          mode: lacp
+{# ######### MLAG ONLY #}
+{%   if bond.clag_id is defined %}
+          mlag:
+            id: {{ bond.clag_id }}
+{%   endif %}{# bond.clag_id #}
+{# ############ #}
+{%   if bond.bridge is defined %}
+        bridge:
+          domain:
+            br_default:
+{%   if bond.options is defined %}
+{%     if bond.options.stp_extras|default() %}
+              stp:
+                bpdu-guard: on
+                auto-edge: on
+                admin-edge: on
+{%     endif %}{# bond.options.extras #}
+{%   endif %}{# bond.options #}
+{%     if bond.bridge.access is defined %}
+              access: {{ bond.bridge.access }}
+{%     elif bond.bridge.vids is defined %}
+{%       for vid in bond.bridge.vids %}
+              vlan:
+                '{{ vid }}': {}
+{%              endfor %}{# vids #}
+{%     elif bond.bridge.untagged is defined %}
+              untagged: {{ bond.bridge.untagged }}
+              vlan:
+                all: {}
+{%     endif %}
+{%   endif %}{# bond.bridge #}
+{% if bond.description is defined %}
+        description: {{ bond.description }}
+{% endif %}
+{% if evpn_mh is defined %}
+        evpn:
+          multihoming:
+            segment:
+{% if es_df_pref is defined %}
+              df-preference: {{ bond.es_df_pref }}
+{% endif  %}
+              enable: on
+              local-id: {{ bond.es_id }}
+              mac-address: {{ evpn_mh.sysmac }}
+{%     endif %}
+{%- if bond.options.mtu is defined %}
+        link:
+          mtu: {{ bond.options.mtu }}
+{%     endif %}{# bond.options.mtu #}
+        type: bond
+{% endfor %}{# bonds #}

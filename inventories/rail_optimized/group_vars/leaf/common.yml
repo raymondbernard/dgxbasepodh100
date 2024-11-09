@@ -1,0 +1,813 @@
+---
+#global_anycast_mac: "{{ mlag_sysmac_prefix }}:{{ vxlan_anycast_id }}"
+global_anycast_mac: "{{ evpn_mh_sysmac_prefix }}:{{ vxlan_anycast_id }}"
+loopback:
+  ips:
+    - "{{ vxlan_local_loopback }}"
+  vxlan_local_tunnel_ip: "{{ vxlan_local_loopback | ipaddr('address') }}"
+#  clag_vxlan_anycast_ip: "{{ vxlan_anycast_loopback | ipaddr('address') }}"
+eth0:
+  ips:
+    - "{{ eth0_ip }}"
+bonds:
+  - name: bond1
+    ports: [swp17s0]
+    # clag_id: 1
+    es_id: 1
+    es_df_pref: "{{ es_df_pref | default() }}"
+    bridge:
+      untagged: 122
+    description: "to-{{ hostvars['dgx01'].inventory_hostname }}"
+    options:
+      mtu: 9216
+      stp_extras: true
+  - name: bond2
+    ports: [swp17s1]
+    # clag_id: 2
+    es_id: 2
+    es_df_pref: "{{ es_df_pref | default() }}"
+    bridge:
+      untagged: 122
+    description: "to-{{ hostvars['dgx02'].inventory_hostname }}"
+    options:
+      mtu: 9216
+      stp_extras: true
+  - name: bond3
+    ports: [swp17s2]
+    # clag_id: 3
+    es_id: 3
+    es_df_pref: "{{ es_df_pref | default() }}"
+    bridge:
+      untagged: 122
+    description: "to-{{ hostvars['dgx03'].inventory_hostname }}"
+    options:
+      mtu: 9216
+      stp_extras: true
+  - name: bond4
+    ports: [swp17s3]
+    # clag_id: 4
+    es_id: 4
+    es_df_pref: "{{ es_df_pref | default() }}"
+    bridge:
+      untagged: 122
+    description: "to-{{ hostvars['dgx04'].inventory_hostname }}"
+    options:
+      mtu: 9216
+      stp_extras: true
+  - name: bond5
+    ports: [swp31s0]
+    # clag_id: 19
+    es_id: 5
+    es_df_pref: "{{ es_df_pref | default() }}"
+    bridge:
+      untagged: 122
+    description: "to-{{ hostvars['k8s01'].inventory_hostname }}"
+    options:
+      mtu: 9216
+      stp_extras: true
+  - name: bond6
+    ports: [swp31s1]
+    # clag_id: 20
+    es_id: 6
+    es_df_pref: "{{ es_df_pref | default() }}"
+    bridge:
+      untagged: 122
+    description: "to-{{ hostvars['k8s02'].inventory_hostname }}"
+    options:
+      mtu: 9216
+      stp_extras: true
+  - name: bond7
+    ports: [swp32s0]
+    # clag_id: 21
+    es_id: 7
+    es_df_pref: "{{ es_df_pref | default() }}"
+    bridge:
+      untagged: 122
+    description: "to-{{ hostvars['k8s03'].inventory_hostname }}"
+    options:
+      mtu: 9216
+      stp_extras: true
+  - name: bond8
+    ports: [swp33]
+    # clag_id: 22
+    es_id: 8
+    es_df_pref: "{{ es_df_pref | default() }}"
+    bridge:
+      untagged: 122
+    description: "to-{{ hostvars['storage01'].inventory_hostname }}"
+    options:
+      mtu: 9216
+      stp_extras: true
+  - name: bond9
+    ports: [swp34]
+    # clag_id: 23
+    es_id: 9
+    es_df_pref: "{{ es_df_pref | default() }}"
+    bridge:
+      untagged: 122
+    description: "to-{{ hostvars['storage02'].inventory_hostname }}"
+    options:
+      mtu: 9216
+      stp_extras: true
+  # - name: bond24
+  #   ports: [swp35]
+  #   # clag_id: 24
+  #   es_id: 24
+  #   es_df_pref: "{{ es_df_pref | default() }}"
+  #   bridge:
+  #     untagged: 122
+  #   description: "to-{{ hostvars['storage03'].inventory_hostname }}"
+  #   options:
+  #     mtu: 9216
+  #     stp_extras: true 
+  # - name: bond25
+  #   ports: [swp36]
+  #   # clag_id: 25
+  #   es_id: 25
+  #   es_df_pref: "{{ es_df_pref | default() }}"
+  #   bridge:
+  #     untagged: 122
+  #   description: "to-{{ hostvars['storage04'].inventory_hostname }}"
+  #   options:
+  #     mtu: 9216
+  #     stp_extras: true
+  # - name: bond26
+  #   ports: [swp37]
+  #   # clag_id: 26
+  #   es_id: 26
+  #   es_df_pref: "{{ es_df_pref | default() }}"
+  #   bridge:
+  #     untagged: 122
+  #   description: "to-{{ hostvars['storage05'].inventory_hostname }}"
+  #   options:
+  #     mtu: 9216
+  #     stp_extras: true
+  # - name: bond27
+  #   ports: [swp38]
+  #   # clag_id: 27
+  #   es_id: 27
+  #   es_df_pref: "{{ es_df_pref | default() }}"
+  #   bridge:
+  #     untagged: 122
+  #   description: "to-{{ hostvars['storage06'].inventory_hostname }}"
+  #   options:
+  #     mtu: 9216
+  #     stp_extras: true
+  # - name: bond28
+  #   ports: [swp39]
+  #   # clag_id: 28
+  #   es_id: 28
+  #   es_df_pref: "{{ es_df_pref | default() }}"
+  #   bridge:
+  #     untagged: 122
+  #   description: "to-{{ hostvars['storage07'].inventory_hostname }}"
+  #   options:
+  #     mtu: 9216
+  #     stp_extras: true  
+  # - name: bond29
+  #   ports: [swp40]
+  #   # clag_id: 29
+  #   es_id: 29
+  #   es_df_pref: "{{ es_df_pref | default() }}"
+  #   bridge:
+  #     untagged: 122
+  #   description: "to-{{ hostvars['storage08'].inventory_hostname }}"
+  #   options:
+  #     mtu: 9216
+  #     stp_extras: true    
+  # - name: bond30
+  #   ports: [swp41]
+  #   # clag_id: 30
+  #   es_id: 30
+  #   es_df_pref: "{{ es_df_pref | default() }}"
+  #   bridge:
+  #     untagged: 122
+  #   description: "to-{{ hostvars['storage09'].inventory_hostname }}"
+  #   options:
+  #     mtu: 9216
+  #     stp_extras: true      
+  # - name: bond31
+  #   ports: [swp42]
+  #   # clag_id: 31
+  #   es_id: 31
+  #   es_df_pref: "{{ es_df_pref | default() }}"
+  #   bridge:
+  #     untagged: 122
+  #   description: "to-{{ hostvars['storage10'].inventory_hostname }}"
+  #   options:
+  #     mtu: 9216
+  #     stp_extras: true        
+  # - name: bond32
+  #   ports: [swp43]
+  #   # clag_id: 32
+  #   es_id: 32
+  #   es_df_pref: "{{ es_df_pref | default() }}"
+  #   bridge:
+  #     untagged: 122
+  #   description: "to-{{ hostvars['storage11'].inventory_hostname }}"
+  #   options:
+  #     mtu: 9216
+  #     stp_extras: true          
+  # - name: bond33
+  #   ports: [swp44]
+  #   # clag_id: 33
+  #   es_id: 33
+  #   es_df_pref: "{{ es_df_pref | default() }}"
+  #   bridge:
+  #     untagged: 122
+  #   description: "to-{{ hostvars['storage12'].inventory_hostname }}"
+  #   options:
+  #     mtu: 9216
+  #     stp_extras: true          
+# vnis_vrr:
+#   - "{{ vni121 }}"
+#   - "{{ vni122 }}"
+bridge:
+  ports:
+    - "{{ vni121.name }}"
+    - "{{ vni122.name }}"
+    # - "{{ vni30.name }}"
+    # - "{{ vniRED.name }}"
+    # - "{{ vniBLUE.name }}"
+    # - "peerlink"
+    - "bond1"
+    - "bond2"
+    - "bond3"
+    - "bond4"
+    - "bond5"
+    - "bond6"
+    - "bond7"
+    - "bond8"
+    - "bond9"
+    # - "bond10"
+    # - "bond11"
+    # - "bond12"
+    # - "bond13"
+    # - "bond14"
+    # - "bond15"
+    # - "bond16"
+    ## added swp25s0 and swp25s1 on each leaf as regular swp L2 ports towards BCM 
+    # - "bond17"
+    # - "bond18"
+    - "swp30s0"
+    - "swp30s1"
+    # - "bond19"
+    # - "bond20"
+    # - "bond21"
+    # - "bond22"
+    # - "bond23"
+    # - "bond24"
+    # - "bond25"
+    # - "bond26"
+    # - "bond27"
+    # - "bond28"
+    # - "bond29"
+    # - "bond30"
+    # - "bond31"
+    # - "bond32"
+    # - "bond33"
+  vids:
+    - 121
+    - 122
+evpn_mh:
+  sysmac: "{{ evpn_mh_sysmac_prefix }}:{{ sysmac }}"
+  startup_delay: 10
+# mlag:
+#   sysmac: "{{ mlag_sysmac_prefix }}:{{ sysmac }}"
+#   priority: "{{ mlag_priority }}"
+#   peerlinks: [swp47, swp48]
+#   backup: "{{ hostvars[ mlag_neighbor ].loopback.vxlan_local_tunnel_ip | ipaddr('address') }}"
+#   init_delay: 10
+vlans:
+  - "{{ vlan121 }}"
+  - "{{ vlan122 }}"
+interfaces: ### set vrf per GPU NIC for multi-tenancy. current implementation is for single tenant (== no mutlti-tenancy)
+  - name: swp1s0
+    ip: "{{ dgx_interfaces_ips.swp1s0 }}"
+    vrf: "{{ vrf_1.name }}"
+    # vrf: "{{ vrf_1.name }}"
+  - name: swp1s1
+    ip: "{{ dgx_interfaces_ips.swp1s1 }}"
+    vrf: "{{ vrf_1.name }}"
+    # vrf: "{{ vrf_2.name }}"
+  - name: swp1s2
+    ip: "{{ dgx_interfaces_ips.swp1s2 }}"
+    vrf: "{{ vrf_1.name }}"
+    # vrf: "{{ vrf_3.name }}"
+  - name: swp1s3
+    ip: "{{ dgx_interfaces_ips.swp1s3 }}"
+    vrf: "{{ vrf_1.name }}"
+    # vrf: "{{ vrf_4.name }}"
+  - name: swp2s0
+    ip: "{{ dgx_interfaces_ips.swp2s0 }}"
+    vrf: "{{ vrf_1.name }}"
+    # vrf: "{{ vrf_5.name }}"
+  - name: swp2s1
+    ip: "{{ dgx_interfaces_ips.swp2s1 }}"
+    vrf: "{{ vrf_1.name }}"
+    # vrf: "{{ vrf_6.name }}"
+  - name: swp2s2
+    ip: "{{ dgx_interfaces_ips.swp2s2 }}"
+    vrf: "{{ vrf_1.name }}"
+    # vrf: "{{ vrf_7.name }}"
+  - name: swp2s3
+    ip: "{{ dgx_interfaces_ips.swp2s3 }}"
+    vrf: "{{ vrf_1.name }}"
+    # vrf: "{{ vrf_8.name }}"
+  - name: swp3s0
+    ip: "{{ dgx_interfaces_ips.swp3s0 }}"
+    vrf: "{{ vrf_1.name }}"
+    # vrf: "{{ vrf_9.name }}"
+  - name: swp3s1
+    ip: "{{ dgx_interfaces_ips.swp3s1 }}"
+    vrf: "{{ vrf_1.name }}"
+    # vrf: "{{ vrf_10.name }}"
+  - name: swp3s2
+    ip: "{{ dgx_interfaces_ips.swp3s2 }}"
+    vrf: "{{ vrf_1.name }}"
+    # vrf: "{{ vrf_11.name }}"
+  - name: swp3s3
+    ip: "{{ dgx_interfaces_ips.swp3s3 }}"
+    vrf: "{{ vrf_1.name }}"
+    # vrf: "{{ vrf_12.name }}"
+  - name: swp4s0
+    ip: "{{ dgx_interfaces_ips.swp4s0 }}"
+    vrf: "{{ vrf_1.name }}"
+    # vrf: "{{ vrf_13.name }}"
+  - name: swp4s1
+    ip: "{{ dgx_interfaces_ips.swp4s1 }}"
+    vrf: "{{ vrf_1.name }}"
+    # vrf: "{{ vrf_14.name }}"
+  - name: swp4s2
+    ip: "{{ dgx_interfaces_ips.swp4s2 }}"
+    vrf: "{{ vrf_1.name }}"
+    # vrf: "{{ vrf_15.name }}"
+  - name: swp4s3
+    ip: "{{ dgx_interfaces_ips.swp4s3 }}"
+    vrf: "{{ vrf_1.name }}"
+    # vrf: "{{ vrf_16.name }}"
+  # - name: swp5s0
+  #   ip: "{{ dgx_interfaces_ips.swp5s0 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_17.name }}"
+  # - name: swp5s1
+  #   ip: "{{ dgx_interfaces_ips.swp5s1 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_18.name }}"
+  # - name: swp5s2
+  #   ip: "{{ dgx_interfaces_ips.swp5s2 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_19.name }}"
+  # - name: swp5s3
+  #   ip: "{{ dgx_interfaces_ips.swp5s3 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_20.name }}"
+  # - name: swp6s0
+  #   ip: "{{ dgx_interfaces_ips.swp6s0 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_21.name }}"
+  # - name: swp6s1
+  #   ip: "{{ dgx_interfaces_ips.swp6s1 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_22.name }}"
+  # - name: swp6s2
+  #   ip: "{{ dgx_interfaces_ips.swp6s2 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_23.name }}"
+  # - name: swp6s3
+  #   ip: "{{ dgx_interfaces_ips.swp6s3 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_24.name }}"
+  # - name: swp7s0
+  #   ip: "{{ dgx_interfaces_ips.swp7s0 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_25.name }}"
+  # - name: swp7s1
+  #   ip: "{{ dgx_interfaces_ips.swp7s1 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_26.name }}"
+  # - name: swp7s2
+  #   ip: "{{ dgx_interfaces_ips.swp7s2 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_27.name }}"
+  # - name: swp7s3
+  #   ip: "{{ dgx_interfaces_ips.swp7s3 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_28.name }}"
+  # - name: swp8s0
+  #   ip: "{{ dgx_interfaces_ips.swp8s0 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_29.name }}"
+  # - name: swp8s1
+  #   ip: "{{ dgx_interfaces_ips.swp8s1 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_30.name }}"
+  # - name: swp8s2
+  #   ip: "{{ dgx_interfaces_ips.swp8s2 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_31.name }}"
+  # - name: swp8s3
+  #   ip: "{{ dgx_interfaces_ips.swp8s3 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_32.name }}"
+  # - name: swp9s0
+  #   ip: "{{ dgx_interfaces_ips.swp9s0 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_33.name }}"
+  # - name: swp9s1
+  #   ip: "{{ dgx_interfaces_ips.swp9s1 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_34.name }}"
+  # - name: swp9s2
+  #   ip: "{{ dgx_interfaces_ips.swp9s2 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_35.name }}"
+  # - name: swp9s3
+  #   ip: "{{ dgx_interfaces_ips.swp9s3 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_36.name }}"
+  # - name: swp10s0
+  #   ip: "{{ dgx_interfaces_ips.swp10s0 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_37.name }}"
+  # - name: swp10s1
+  #   ip: "{{ dgx_interfaces_ips.swp10s1 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_38.name }}"
+  # - name: swp10s2
+  #   ip: "{{ dgx_interfaces_ips.swp10s2 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_39.name }}"
+  # - name: swp10s3
+  #   ip: "{{ dgx_interfaces_ips.swp10s3 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_40.name }}"
+  # - name: swp11s0
+  #   ip: "{{ dgx_interfaces_ips.swp11s0 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_41.name }}"
+  # - name: swp11s1
+  #   ip: "{{ dgx_interfaces_ips.swp11s1 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_42.name }}"
+  # - name: swp11s2
+  #   ip: "{{ dgx_interfaces_ips.swp11s2 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_43.name }}"
+  # - name: swp11s3
+  #   ip: "{{ dgx_interfaces_ips.swp11s3 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_44.name }}"
+  # - name: swp12s0
+  #   ip: "{{ dgx_interfaces_ips.swp12s0 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_45.name }}"
+  # - name: swp12s1
+  #   ip: "{{ dgx_interfaces_ips.swp12s1 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_46.name }}"
+  # - name: swp12s2
+  #   ip: "{{ dgx_interfaces_ips.swp12s2 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_47.name }}"
+  # - name: swp12s3
+  #   ip: "{{ dgx_interfaces_ips.swp12s3 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_48.name }}"
+  # - name: swp13s0
+  #   ip: "{{ dgx_interfaces_ips.swp13s0 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_49.name }}"
+  # - name: swp13s1
+  #   ip: "{{ dgx_interfaces_ips.swp13s1 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_50.name }}"
+  # - name: swp13s2
+  #   ip: "{{ dgx_interfaces_ips.swp13s2 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_51.name }}"
+  # - name: swp13s3
+  #   ip: "{{ dgx_interfaces_ips.swp13s3 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_52.name }}"
+  # - name: swp14s0
+  #   ip: "{{ dgx_interfaces_ips.swp14s0 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_53.name }}"
+  # - name: swp14s1
+  #   ip: "{{ dgx_interfaces_ips.swp14s1 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_54.name }}"
+  # - name: swp14s2
+  #   ip: "{{ dgx_interfaces_ips.swp14s2 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_55.name }}"
+  # - name: swp14s3
+  #   ip: "{{ dgx_interfaces_ips.swp14s3 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_56.name }}"
+  # - name: swp15s0
+  #   ip: "{{ dgx_interfaces_ips.swp15s0 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_57.name }}"
+  # - name: swp15s1
+  #   ip: "{{ dgx_interfaces_ips.swp15s1 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_58.name }}"
+  # - name: swp15s2
+  #   ip: "{{ dgx_interfaces_ips.swp15s2 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_59.name }}"
+  # - name: swp15s3
+  #   ip: "{{ dgx_interfaces_ips.swp15s3 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_60.name }}"
+  # - name: swp16s0
+  #   ip: "{{ dgx_interfaces_ips.swp16s0 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_61.name }}"
+  # - name: swp16s1
+  #   ip: "{{ dgx_interfaces_ips.swp16s1 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_62.name }}"
+  # - name: swp16s2
+  #   ip: "{{ dgx_interfaces_ips.swp16s2 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_63.name }}"
+  # - name: swp16s3
+  #   ip: "{{ dgx_interfaces_ips.swp16s3 }}"
+  #   vrf: "{{ vrf_1.name }}"
+  #   # vrf: "{{ vrf_64.name }}"
+  - name: swp29s0
+    ip: "{{ bgp_interfaces.swp29s0.ip }}"
+    vrf: "{{ vrf_0.name }}"
+  - name: swp29s1
+    ip: "{{ bgp_interfaces.swp29s1.ip }}"
+    vrf: "{{ vrf_0.name }}"  
+  - name: swp45
+    ip: "{{ bgp_interfaces.swp45.ip }}"
+    vrf: "{{ vrf_0.name }}"
+  - name: swp46
+    ip: "{{ bgp_interfaces.swp46.ip }}"
+    vrf: "{{ vrf_0.name }}"  
+  # - name: swp47
+  #   ip: "{{ bgp_interfaces.swp47.ip }}"
+  #   ar: true
+  #   evpn_mh_uplink: true
+  # - name: swp48
+  #   ip: "{{ bgp_interfaces.swp48.ip }}"
+  #   ar: true
+  #   evpn_mh_uplink: true
+  # - name: swp49
+  #   ip: "{{ bgp_interfaces.swp49.ip }}"
+  #   ar: true
+  #   evpn_mh_uplink: true
+  # - name: swp50
+  #   ip: "{{ bgp_interfaces.swp50.ip }}"
+  #   ar: true
+  #   evpn_mh_uplink: true
+  # - name: swp51
+  #   ip: "{{ bgp_interfaces.swp51.ip }}"
+  #   ar: true
+  #   evpn_mh_uplink: true
+  # - name: swp52
+  #   ip: "{{ bgp_interfaces.swp52.ip }}"
+  #   ar: true
+  #   evpn_mh_uplink: true
+  # - name: swp53
+  #   ip: "{{ bgp_interfaces.swp53.ip }}"
+  #   ar: true
+  #   evpn_mh_uplink: true
+  # - name: swp54
+  #   ip: "{{ bgp_interfaces.swp54.ip }}"
+  #   ar: true
+  #   evpn_mh_uplink: true
+  # - name: swp55
+  #   ip: "{{ bgp_interfaces.swp55.ip }}"
+  #   ar: true
+  #   evpn_mh_uplink: true
+  # - name: swp56
+  #   ip: "{{ bgp_interfaces.swp56.ip }}"
+  #   ar: true
+  #   evpn_mh_uplink: true
+  # - name: swp57
+  #   ip: "{{ bgp_interfaces.swp57.ip }}"
+  #   ar: true
+  #   evpn_mh_uplink: true
+  # - name: swp58
+  #   ip: "{{ bgp_interfaces.swp58.ip }}"
+  #   ar: true
+  #   evpn_mh_uplink: true
+  # - name: swp59
+  #   ip: "{{ bgp_interfaces.swp59.ip }}"
+  #   ar: true
+  #   evpn_mh_uplink: true
+  # - name: swp60
+  #   ip: "{{ bgp_interfaces.swp60.ip }}"
+  #   ar: true
+  #   evpn_mh_uplink: true
+  - name: swp61
+    ip: "{{ bgp_interfaces.swp61.ip }}"
+    ar: true
+    evpn_mh_uplink: true
+  - name: swp62
+    ip: "{{ bgp_interfaces.swp62.ip }}"
+    ar: true
+    evpn_mh_uplink: true
+  - name: swp63
+    ip: "{{ bgp_interfaces.swp63.ip }}"
+    ar: true
+    evpn_mh_uplink: true
+  - name: swp64
+    ip: "{{ bgp_interfaces.swp64.ip }}"
+    ar: true
+    evpn_mh_uplink: true
+  - name: swp17s0
+  - name: swp17s1
+  - name: swp17s2
+  - name: swp17s3
+  # - name: swp19s0
+  # - name: swp19s1
+  # - name: swp20s0
+  # - name: swp20s1
+  # - name: swp21s0
+  # - name: swp21s1
+  # - name: swp22s0
+  # - name: swp22s1
+  # - name: swp23s0
+  # - name: swp23s1
+  # - name: swp24s0
+  # - name: swp24s1
+  - name: swp30s0
+    bridge: ## remove bridge or change VLANs if needed
+      access: 121
+  - name: swp30s1
+    bridge: ## remove bridge or change VLANs if needed
+      access: 122
+  - name: swp31s0
+  - name: swp31s1
+  - name: swp32s0
+  # - name: swp28
+  # - name: swp29s0
+  # - name: swp29s1
+  - name: swp33
+  - name: swp34
+  # - name: swp35
+  # - name: swp36
+  # - name: swp37
+  # - name: swp38
+  # - name: swp39
+  # - name: swp40
+  # - name: swp41
+  # - name: swp42
+  # - name: swp43
+  # - name: swp44
+  # - name: swp45
+  # - name: swp46
+vrfs:
+  - "{{ vrf_mgmt }}"
+bgp:
+  asn: "{{ bgp_asn_prefix }}0{{ id }}"
+  router_id: "{{ vxlan_local_loopback | ipaddr('address') }}"
+  peergroups:
+    - {name: underlay, description: underlay_interconnect ,remote_as: external}
+    - {name: overlay, description: overlay_interconnect ,remote_as: external, ttl: 2, src: lo}
+    - {name: ipmi_edge, description: ipmi_edge_interconnect ,remote_as: external}
+#: ipmi_leaf, description: ipmi_leaf_interconnect ,remote_as: external}
+#    - {name: edge_leaf, description: edge_leaf_interconnect ,remote_as: external}
+  neighbors:
+#    - {ip: peerlink.4094, unnumbered: true, description: "peerlink", peergroup: underlay}
+    # - {ip: "{{ bgp_interfaces.swp47.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp47.bgp_neighbor }}-{{ bgp_interfaces.swp47.bgp_peer_int }}", peergroup: underlay}
+    # - {ip: "{{ bgp_interfaces.swp48.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp48.bgp_neighbor }}-{{ bgp_interfaces.swp48.bgp_peer_int }}", peergroup: underlay}
+    # - {ip: "{{ bgp_interfaces.swp49.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp49.bgp_neighbor }}-{{ bgp_interfaces.swp49.bgp_peer_int }}", peergroup: underlay}
+    # - {ip: "{{ bgp_interfaces.swp50.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp50.bgp_neighbor }}-{{ bgp_interfaces.swp50.bgp_peer_int }}", peergroup: underlay}
+    # - {ip: "{{ bgp_interfaces.swp51.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp51.bgp_neighbor }}-{{ bgp_interfaces.swp51.bgp_peer_int }}", peergroup: underlay}
+    # - {ip: "{{ bgp_interfaces.swp52.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp52.bgp_neighbor }}-{{ bgp_interfaces.swp52.bgp_peer_int }}", peergroup: underlay}
+    # - {ip: "{{ bgp_interfaces.swp53.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp53.bgp_neighbor }}-{{ bgp_interfaces.swp53.bgp_peer_int }}", peergroup: underlay}
+    # - {ip: "{{ bgp_interfaces.swp54.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp54.bgp_neighbor }}-{{ bgp_interfaces.swp54.bgp_peer_int }}", peergroup: underlay}
+    # - {ip: "{{ bgp_interfaces.swp55.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp55.bgp_neighbor }}-{{ bgp_interfaces.swp55.bgp_peer_int }}", peergroup: underlay}
+    # - {ip: "{{ bgp_interfaces.swp56.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp56.bgp_neighbor }}-{{ bgp_interfaces.swp56.bgp_peer_int }}", peergroup: underlay}
+    # - {ip: "{{ bgp_interfaces.swp57.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp57.bgp_neighbor }}-{{ bgp_interfaces.swp57.bgp_peer_int }}", peergroup: underlay}
+    # - {ip: "{{ bgp_interfaces.swp58.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp58.bgp_neighbor }}-{{ bgp_interfaces.swp58.bgp_peer_int }}", peergroup: underlay}
+    # - {ip: "{{ bgp_interfaces.swp59.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp59.bgp_neighbor }}-{{ bgp_interfaces.swp59.bgp_peer_int }}", peergroup: underlay}
+    # - {ip: "{{ bgp_interfaces.swp60.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp60.bgp_neighbor }}-{{ bgp_interfaces.swp60.bgp_peer_int }}", peergroup: underlay}
+    - {ip: "{{ bgp_interfaces.swp61.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp61.bgp_neighbor }}-{{ bgp_interfaces.swp61.bgp_peer_int }}", peergroup: underlay}
+    - {ip: "{{ bgp_interfaces.swp62.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp62.bgp_neighbor }}-{{ bgp_interfaces.swp62.bgp_peer_int }}", peergroup: underlay}
+    - {ip: "{{ bgp_interfaces.swp63.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp63.bgp_neighbor }}-{{ bgp_interfaces.swp63.bgp_peer_int }}", peergroup: underlay}
+    - {ip: "{{ bgp_interfaces.swp64.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp64.bgp_neighbor }}-{{ bgp_interfaces.swp64.bgp_peer_int }}", peergroup: underlay}
+  overlay_neighbors: 
+    - {ip: "{{ overlay.peer_lo }}", description: "to-{{ overlay.peer_name }}-loopback", peergroup: overlay}
+  ipmi_edge_neighbors: 
+    - {ip: "{{ bgp_interfaces.swp29s0.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp29s0.bgp_neighbor }}-{{ bgp_interfaces.swp29s0.bgp_peer_int }}", peergroup: ipmi_edge}
+    - {ip: "{{ bgp_interfaces.swp29s1.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp29s1.bgp_neighbor }}-{{ bgp_interfaces.swp29s1.bgp_peer_int }}", peergroup: ipmi_edge}
+    - {ip: "{{ bgp_interfaces.swp45.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp45.bgp_neighbor }}-{{ bgp_interfaces.swp45.bgp_peer_int }}", peergroup: ipmi_edge}
+    - {ip: "{{ bgp_interfaces.swp46.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp46.bgp_neighbor }}-{{ bgp_interfaces.swp46.bgp_peer_int }}", peergroup: ipmi_edge}
+#  ipmi_leaf_neighbors: 
+#    - {ip: "{{ bgp_interfaces.swp49.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp49.bgp_neighbor }}-{{ bgp_interfaces.swp49.bgp_peer_int }}", peergroup: ipmi_leaf}
+#    - {ip: "{{ bgp_interfaces.swp50.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp50.bgp_neighbor }}-{{ bgp_interfaces.swp50.bgp_peer_int }}", peergroup: ipmi_leaf}
+#  edge_leaf_neighbors: 
+#    - {ip: "{{ bgp_interfaces.swp45.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp45.bgp_neighbor }}-{{ bgp_interfaces.swp45.bgp_peer_int }}", peergroup: edge_leaf}
+#    - {ip: "{{ bgp_interfaces.swp46.bgp_peer_ip | ipaddr('address') }}", description: "to-{{ bgp_interfaces.swp46.bgp_neighbor }}-{{ bgp_interfaces.swp46.bgp_peer_int }}", peergroup: edge_leaf}
+  address_family:
+    - name: ipv4_unicast
+##  Agg route only for non EVPN scenario
+##      aggregate_address: "{{ gpu_subnets_summary_route }}"
+      redistribute:
+#        - {type: connected, route_map: dgx_and_lo_subnets}
+        - {type: connected, route_map: lo_subnet}
+      neighbors:
+        - {interface: underlay, activate: true}
+    - name: l2vpn_evpn
+      neighbors:
+        - {interface: overlay, activate: true}
+  vrfs: ## uncomment VRFs per needed tenants. current implementation is using two VRFs - GPU and inband/storage
+    - "{{ vrf_0}}"
+    - "{{ vrf_1 }}"
+    # - "{{ vrf_2 }}"
+    # - "{{ vrf_3 }}"
+    # - "{{ vrf_4 }}"
+    # - "{{ vrf_5 }}"
+    # - "{{ vrf_6 }}"
+    # - "{{ vrf_7 }}"
+    # - "{{ vrf_8 }}"
+    # - "{{ vrf_9 }}"
+    # - "{{ vrf_10 }}"
+    # - "{{ vrf_11 }}"
+    # - "{{ vrf_12 }}"
+    # - "{{ vrf_13 }}"
+    # - "{{ vrf_14 }}"
+    # - "{{ vrf_15 }}"
+    # - "{{ vrf_16 }}"
+    # - "{{ vrf_17 }}"
+    # - "{{ vrf_18 }}"
+    # - "{{ vrf_19 }}"
+    # - "{{ vrf_20 }}"
+    # - "{{ vrf_21 }}"
+    # - "{{ vrf_22 }}"
+    # - "{{ vrf_23 }}"
+    # - "{{ vrf_24 }}"
+    # - "{{ vrf_25 }}"
+    # - "{{ vrf_26 }}"
+    # - "{{ vrf_27 }}"
+    # - "{{ vrf_28 }}"
+    # - "{{ vrf_29 }}"
+    # - "{{ vrf_30 }}"
+    # - "{{ vrf_31 }}"
+    # - "{{ vrf_32 }}"
+    # - "{{ vrf_33 }}"
+    # - "{{ vrf_34 }}"
+    # - "{{ vrf_35 }}"
+    # - "{{ vrf_36 }}"
+    # - "{{ vrf_37 }}"
+    # - "{{ vrf_38 }}"
+    # - "{{ vrf_39 }}"
+    # - "{{ vrf_40 }}"
+    # - "{{ vrf_41 }}"
+    # - "{{ vrf_42 }}"
+    # - "{{ vrf_43 }}"
+    # - "{{ vrf_44 }}"
+    # - "{{ vrf_45 }}"
+    # - "{{ vrf_46 }}"
+    # - "{{ vrf_47 }}"
+    # - "{{ vrf_48 }}"
+    # - "{{ vrf_49 }}"
+    # - "{{ vrf_50 }}"
+    # - "{{ vrf_51 }}"
+    # - "{{ vrf_52 }}"
+    # - "{{ vrf_53 }}"
+    # - "{{ vrf_54 }}"
+    # - "{{ vrf_55 }}"
+    # - "{{ vrf_56 }}"
+    # - "{{ vrf_57 }}"
+    # - "{{ vrf_58 }}"
+    # - "{{ vrf_59 }}"
+    # - "{{ vrf_60 }}"
+    # - "{{ vrf_61 }}"
+    # - "{{ vrf_62 }}"
+    # - "{{ vrf_63 }}"
+    # - "{{ vrf_64 }}"
+  vrf_params:
+    router_id: "{{ vxlan_local_loopback | ipaddr('address') }}"
+    address_family:
+      - name: ipv4_unicast
+        aggregate_address: "{{ gpu_subnets_summary_route }}"
+        aggregate_address_inband: "{{ inband_subnets_summary_route }}"
+#        aggregate_address_inband: "{{ inband_mgmt_and_storage_subnet_summary_route }}"
+        redistribute:
+          - {type: connected, route_map1: dgx_subnets, route_map2: inband_subnets}
+        route_export:
+          - {type: to-evpn}
+      - name: l2vpn_evpn
+        # neighbors:
+        #   - {interface: overlay, activate: true}
+  graceful_restart:
+    mode: "{{ graceful_restart.mode }}"
+  graceful_shutdown: true
+underlay_bfd:
+  detect_multiplier: "{{ underlay_bfd.detect_multiplier }}"
+  min_rx_interval: "{{ underlay_bfd.min_rx_interval }}"
+  min_tx_interval: "{{ underlay_bfd.min_tx_interval }}"
+overlay_bfd:
+  detect_multiplier: "{{ overlay_bfd.detect_multiplier }}"
+  min_rx_interval: "{{ overlay_bfd.min_rx_interval }}"
+  min_tx_interval: "{{ overlay_bfd.min_tx_interval }}"

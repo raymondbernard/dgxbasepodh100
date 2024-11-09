@@ -1,0 +1,16 @@
+network:
+  renderer: networkd
+  ethernets:
+{% for nic in inband_mgmt.nics %}
+    {{ nic }}:
+      dhcp4: no
+{% endfor %}
+{% for bond in inband_mgmt.bonds %}
+  bonds:
+    {{ bond.name }}:
+      interfaces: [{{inband_mgmt.nics[0]}}, {{inband_mgmt.nics[1]}}]
+      parameters:
+        mode: {{ bond.mode}}
+        lacp-rate: {{ bond.rate}}
+      addresses: [{{ bond.ip}}]
+{% endfor %}

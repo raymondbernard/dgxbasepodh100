@@ -1,0 +1,13 @@
+      eth0:
+        ip:
+          vrf: mgmt
+          address:
+{% if eth0.ips is not defined %}
+            dhcp: {}
+{% else %}
+{%   for address in eth0.ips|default() %}
+            {{ address }}: {}
+{%   endfor %}
+{% endif %}
+        type: eth
+

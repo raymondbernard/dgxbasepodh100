@@ -1,0 +1,136 @@
+{#    evpn:
+      enable: on
+#}
+{% for address_family in bgp.address_family|default() %}
+{#
+{% if address_family.name == "l2vpn_evpn" %}
+{% if address_family.advertise_svi_ip|default(False) %}
+      route-advertise:
+        svi-ip: on
+{% endif %}
+{% if address_family.advertise_default_gw|default(False) %}
+        default-gateway: on
+{% endif %}
+{% endif %}
+{% endfor %}
+{% if evpn_mh is defined and inventory_hostname not in groups['spine']%}
+      multihoming:
+        enable: on
+        startup-delay: {{ evpn_mh.startup_delay }}
+{% endif %}
+    router:
+      bgp:
+        enable: on
+{% if pim is defined %}
+      pim:
+        enable: on
+        timers:
+          keep-alive: {{ pim.keep_alive }}
+{% endif %}
+#}
+    vrf:
+      default:
+        router:
+          bgp:
+            router-id: {{ bgp.router_id }}
+            autonomous-system: {{ bgp.asn }}
+            neighbor:
+{% for neighbor in bgp.neighbors %}
+              {{ neighbor.interface }}:
+                peer-group: {{ neighbor.peergroup }}
+                type: unnumbered
+{% endfor %}{# bgp.neighbors #}
+            enable: on
+{% for peergroup in bgp.peergroups|default() %}
+            peer-group:
+              {{ peergroup.name }}:
+                remote-as: {{ peergroup.remote_as }}
+                address-family:
+{% for address_family in bgp.address_family|default() %}
+{%     for neighbor in address_family.neighbors|default() %}
+{%       if neighbor.activate|default(False) %}
+                  {{ address_family.name|replace('_', '-') }}:
+                    enable: on
+{%       endif %}
+{%     endfor %}{# address_family.neighbors #}
+{% endfor %}{# bgp.address_family #}
+{% endfor %}{# bgp.peergroups #}
+            address-family:
+{%   for address_family in bgp.address_family|default() %}
+{%     if address_family.name == "ipv4_unicast" %}
+              ipv4-unicast:
+{%       for redistribute in address_family.redistribute|default() %}
+                redistribute:
+                  {{ redistribute.type }}:
+                    enable: on
+{%       endfor %}{# address_family.redistribute #}
+                enable: on
+{%     elif address_family.name == "l2vpn_evpn" %}
+              l2vpn-evpn:
+                enable: on
+{%     endif %}{# address_family.name #}
+{%   endfor %}{# bgp.address_family #}
+{% if pim is defined %}
+          pim:
+{% for address_family in pim.address_family %}
+            address-family: 
+              {{ address_family.name }}:
+                rp:
+                  {{ pim.rpaddr | ipaddr('address') }}:
+                    group-range:
+                      {{ pim.rp_mcast_range }}: {}
+{% if pim.ecmp is defined %}
+            ecmp:
+              enable: on
+{% else %}
+{% endif -%}
+{% if evpn_mh.rp is defined %}
+            msdp-mesh-group:
+              {{ msdp.mesh_group }}:
+                member-address:
+                  {{ hostvars [ msdp_member ].msdp.source }}: {}
+                source-address: {{ msdp.source }}
+{% else %}
+{% endif -%}
+{% endfor %}
+            enable: on 
+{% endif %}
+{% for vrf in bgp.vrfs|default() %}
+      {{ vrf.name }}:
+        router:
+          bgp:
+            autonomous-system: {{ bgp.asn }}
+            enable: on
+            router-id: {{ vrf.router_id }}
+            address-family:
+{%   for address_family in vrf.address_family|default() %}
+{%     if address_family.name == "ipv4_unicast" %}
+              ipv4-unicast:
+{%       for redistribute in address_family.redistribute|default() %}
+                redistribute:
+                  {{ redistribute.type }}:
+                    enable: on
+{%       endfor %}{# address_family.redistribute #}
+                enable: on
+{%     elif address_family.name == "l2vpn_evpn" %}
+              l2vpn-evpn:
+                enable: on
+{%     endif %}{# address_family.name #}
+{%   endfor %}{# vrf.address_family #}
+        evpn:
+          vni:
+            '{{ vrf.vni }}': {}
+          enable: on
+{%   endfor %}{# bgp.vrfs #}
+{% for vrf in vrfs|default() if vrf.routes_nvue is defined %}
+      {{ vrf.name }}:
+        router:
+{%     for route in vrf.routes_nvue|default() %}
+          static:
+            {{ route.prefix }}:
+              via:
+                {{ route.via }}:
+                  type: ipv4-address
+              address-family: ipv4-unicast
+{%     endfor %}{# vrf.routes_nvue #}
+{% endfor %}{# vrfs #}

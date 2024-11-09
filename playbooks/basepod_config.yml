@@ -1,0 +1,48 @@
+---
+- hosts: leaf 
+  become: true
+  gather_facts: false
+  roles:
+    - {role: nvue, tags: ["nvue"]}
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+- hosts: ipmi 
+  become: true
+  gather_facts: false
+  roles:
+    - {role: ipmi, tags: ["ipmi"]}
+  
+- hosts: edge 
+  become: true
+  gather_facts: false
+  roles:
+    - {role: edge, tags: ["edge"]}
+  
+- hosts: bcm
+  become: true
+  gather_facts: false
+  roles:
+    - {role: bcm, tags: ["bcm"]}
+    - {role: motd, tags: ["motd"]}
+
+- hosts: dgx
+  become: true
+  gather_facts: false
+  roles:
+    - {role: dgx, tags: ["dgx"]}
+    - {role: motd, tags: ["motd"]}
+
+- hosts: mgmt
+  become: true
+  gather_facts: false
+  roles:
+    - {role: mgmt, tags: ["mgmt"]}
+    - {role: motd, tags: ["motd"]}
+    
+- hosts: storage
+  become: true
+  gather_facts: false
+  roles:
+    - {role: storage, tags: ["storage"]}
+    - {role: motd, tags: ["motd"]}    

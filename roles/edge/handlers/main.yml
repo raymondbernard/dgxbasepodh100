@@ -1,0 +1,4 @@
+---
+- name: apply nvue changes
+  become: true
+  command: nv config apply /etc/nvue.d/startup.yaml

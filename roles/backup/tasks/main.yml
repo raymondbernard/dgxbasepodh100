@@ -1,0 +1,59 @@
+---
+- name: Ensures local backup dir exists
+  file:
+    path: '{{ backup.path|default( "../inventories/" + fabric_name + "/config/" + inventory_hostname ) }}'
+    recurse: true
+    state: directory
+    mode: "0775"
+  delegate_to: localhost
+  become: false
+  tags:
+    - local
+
+- name: Fetch config from remote switch and save to the config directory
+  fetch:
+    src: "{{ item }}"
+    dest: '{{ backup.path|default( "../inventories/" + fabric_name + "/config/" + inventory_hostname ) }}{{ item }}'
+    fail_on_missing: false
+    flat: true
+  loop: '{{ backup_switch.files|default( [ "/etc/nvue.d/startup.yaml" ] ) }}'
+  become: true
+  when: inventory_hostname in groups["leaf"] or inventory_hostname in groups["spine"]
+  
+- name: Fetch gpu_ports netplan config from remote host and save to the config directory
+  fetch:
+    src: "{{ item }}"
+    dest: '{{ backup.path|default( "../inventories/" + fabric_name + "/config/" + inventory_hostname ) }}{{ item }}'
+    fail_on_missing: false
+    flat: true
+  loop: '{{ backup_host.files|default( [ "/etc/netplan/gpu_config.yaml" ] ) }}'
+  become: true
+  when: inventory_hostname in groups["dgx"]
+
+- name: Fetch mgmt_interface netplan config from remote host and save to the config directory
+  fetch:
+    src: "{{ item }}"
+    dest: '{{ backup.path|default( "../inventories/" + fabric_name + "/config/" + inventory_hostname ) }}{{ item }}'
+    fail_on_missing: false
+    flat: true
+  loop: '{{ backup_host.files|default( [ "/etc/netplan/mgmt_interface.yaml" ] ) }}'
+  become: true
+  when: inventory_hostname in groups["dgx"]
+
+- name: create dictionary with all variables
+  set_fact:
+    user_vars: "{{ user_vars|default({})|combine( { item.key: item.value }, recursive=True ) }}"
+  loop: "{{ query('dict', hostvars[inventory_hostname]) }}"
+  loop_control:
+    label: "{{ item.key }}"
+  delegate_to: localhost
+  become: false
+  when: item.key[:8]|default('') != 'ansible_'
+
+- name: print user variables to the config directory
+  copy:
+    content: "{{ user_vars| to_nice_yaml( width=50, explicit_start=True, explicit_end=True) }}"
+    dest: "{{ backup.path|default( '../inventories/' + fabric_name + '/config/' + inventory_hostname ) + '/ansible_vars' }}"
+    mode: "0775"
+  delegate_to: localhost
+  become: false

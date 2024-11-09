@@ -1,0 +1,205 @@
+---
+vrf_mgmt:
+  name: mgmt
+  routes:
+  - prefix: 0.0.0.0/0
+    via: 192.168.200.1
+  extras:
+    - "address 127.0.0.1/8"
+    - "address ::1/128"
+vrf_0:
+  name: inband_storage
+  vni: 4000
+vrf_1:
+  name: tenant1
+  vni: 4001
+##### add needed vrfs for muliti-tenancy
+# vrf_2:
+#   name: tenant2
+#   vni: 4002
+# vrf_3:
+#   name: tenant3
+#   vni: 4003
+# vrf_4:
+#   name: tenant4
+#   vni: 4004
+# vrf_5:
+#   name: tenant5
+#   vni: 4005
+# vrf_6:
+#   name: tenant6
+#   vni: 4006
+# vrf_7:
+#   name: tenant7
+#   vni: 4007
+# vrf_8:
+#   name: tenant8
+#   vni: 4008
+# vrf_9:
+#   name: tenant9
+#   vni: 4009
+# vrf_10:
+#   name: tenant10
+#   vni: 4010
+# vrf_11:
+#   name: tenant11
+#   vni: 4011
+# vrf_12:
+#   name: tenant12
+#   vni: 4012
+# vrf_13:
+#   name: tenant13
+#   vni: 4013
+# vrf_14:
+#   name: tenant14
+#   vni: 4014
+# vrf_15:
+#   name: tenant15
+#   vni: 4015
+# vrf_16:
+#   name: tenant16
+#   vni: 4016
+# vrf_17:
+#   name: tenant17
+#   vni: 4017
+# vrf_18:
+#   name: tenant18
+#   vni: 4018
+# vrf_19:
+#   name: tenant19
+#   vni: 4019
+# vrf_20:
+#   name: tenant20
+#   vni: 4020
+# vrf_21:
+#   name: tenant21
+#   vni: 4021
+# vrf_22:
+#   name: tenant22
+#   vni: 4022
+# vrf_23:
+#   name: tenant23
+#   vni: 4023
+# vrf_24:
+#   name: tenant24
+#   vni: 4024
+# vrf_25:
+#   name: tenant25
+#   vni: 4025
+# vrf_26:
+#   name: tenant26
+#   vni: 4026
+# vrf_27:
+#   name: tenant27
+#   vni: 4027
+# vrf_28:
+#   name: tenant28
+#   vni: 4028
+# vrf_29:
+#   name: tenant29
+#   vni: 4029
+# vrf_30:
+#   name: tenant30
+#   vni: 4030
+# vrf_31:
+#   name: tenant31
+#   vni: 4031
+# vrf_32:
+#   name: tenant32
+#   vni: 4032
+# vrf_33:
+#   name: tenant33
+#   vni: 4033
+# vrf_34:
+#   name: tenant34
+#   vni: 4034
+# vrf_35:
+#   name: tenant35
+#   vni: 4035
+# vrf_36:
+#   name: tenant36
+#   vni: 4036
+# vrf_37:
+#   name: tenant37
+#   vni: 4037
+# vrf_38:
+#   name: tenant38
+#   vni: 4038
+# vrf_39:
+#   name: tenant39
+#   vni: 4039
+# vrf_40:
+#   name: tenant40
+#   vni: 4040
+# vrf_41:
+#   name: tenant41
+#   vni: 4041
+# vrf_42:
+#   name: tenant42
+#   vni: 4042
+# vrf_43:
+#   name: tenant43
+#   vni: 4043
+# vrf_44:
+#   name: tenant44
+#   vni: 4044
+# vrf_45:
+#   name: tenant45
+#   vni: 4045
+# vrf_46:
+#   name: tenant46
+#   vni: 4046
+# vrf_47:
+#   name: tenant47
+#   vni: 4047
+# vrf_48:
+#   name: tenant48
+#   vni: 4048
+# vrf_49:
+#   name: tenant49
+#   vni: 4049
+# vrf_50:
+#   name: tenant50
+#   vni: 4050
+# vrf_51:
+#   name: tenant51
+#   vni: 4051
+# vrf_52:
+#   name: tenant52
+#   vni: 4052
+# vrf_53:
+#   name: tenant53
+#   vni: 4053
+# vrf_54:
+#   name: tenant54
+#   vni: 4054
+# vrf_55:
+#   name: tenant55
+#   vni: 4055
+# vrf_56:
+#   name: tenant56
+#   vni: 4056
+# vrf_57:
+#   name: tenant57
+#   vni: 4057
+# vrf_58:
+#   name: tenant58
+#   vni: 4058
+# vrf_59:
+#   name: tenant59
+#   vni: 4059
+# vrf_60:
+#   name: tenant60
+#   vni: 4060
+# vrf_61:
+#   name: tenant61
+#   vni: 4061
+# vrf_62:
+#   name: tenant62
+#   vni: 4062
+# vrf_63:
+#   name: tenant63
+#   vni: 4063
+# vrf_64:
+#   name: tenant64
+#   vni: 4064

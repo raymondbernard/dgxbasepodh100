@@ -1,0 +1,46 @@
+---
+vlan111_subnet: "10.130.111.0/24"
+vlan121_subnet: "10.130.121.0/24"
+vlan122_subnet: "10.130.122.0/24"
+l2_vni_rd: "{{ vxlan_local_loopback | ipaddr('address') }}"
+mac_prefix: 00:00:00:00:0
+vlan121:
+  name: vlan121
+  id: 121
+  vxlan_id: 121
+  vrf: "{{ vrf_0.name }}"
+  address:
+    - "{{ vlan121_subnet|nthhost( id+1 ) }}/{{ vlan121_subnet|ipaddr( 'prefix' ) }}"
+  address_virtual:
+    - ip: "{{ vlan121_subnet|nthhost( 1 ) }}/{{ vlan121_subnet|ipaddr( 'prefix' ) }}"
+      mac: "{{ mac_prefix }}1:21"
+vlan122:
+  name: vlan122
+  id: 122
+  vxlan_id: 122
+  vrf: "{{ vrf_0.name }}"
+  address:
+    - "{{ vlan122_subnet|nthhost( id+1 ) }}/{{ vlan122_subnet|ipaddr( 'prefix' ) }}"
+  address_virtual:
+    - ip: "{{ vlan122_subnet|nthhost( 1 ) }}/{{ vlan122_subnet|ipaddr( 'prefix' ) }}"
+      mac: "{{ mac_prefix }}1:22"
+# vlan30:
+#   name: vlan30
+#   id: 30
+#   vrf: BLUE
+#   address:
+#     - "{{ vlan30_subnet|nthhost( id+1 ) }}/{{ vlan30_subnet|ipaddr( 'prefix' ) }}"
+#   address_virtual:
+#     - ip: "{{ vlan30_subnet|nthhost( 1 ) }}/{{ vlan30_subnet|ipaddr( 'prefix' ) }}"
+#       mac: "{{ mac_prefix }}:30"
+# vlan4001:
+#   name: vlan4001
+#   id: 4001
+#   vrf: RED
+#   hwaddress: "{{ mlag.sysmac|default() }}"
+# vlan4002:
+#   name: vlan4002
+#   id: 4002
+#   vrf: BLUE
+#   hwaddress: "{{ mlag.sysmac|default() }}"
+

@@ -1,0 +1,56 @@
+    bridge: 
+      domain: 
+        br_default:
+          type: vlan-aware
+{% if inventory_hostname in groups['leaf'] %}
+{% if evpn_mh is not defined %}
+          vlan:
+{% for vlan in vlans -%}
+{%- if not "hwaddress" in vlan %}
+            '{{ vlan.id }}': {}
+{# ONLY FOR VXLAN - MAY NEED ADD LATER?#}
+              vni:
+                '{{ vlan.id }}': {}
+{##}
+{% endif %}
+{% endfor %}
+{% endif %}
+{% if evpn_mh is defined %} {# only for evpn_mh #}
+         vlan:
+{% for vlan in vlans %}
+{%- if not "hwaddress" in vlan %}
+           '{{ vlan.id }}':
+{# {% if vlan == vlan10 %} #}
+             vni:
+               '{{ vlan.vxlan_id }}': {}
+{#
+                 flooding:
+                   enable: on
+                   multicast-group: {{ vni10.extras }}
+{% elif vlan == vlan20 %}
+             vni:
+               '{{ vni20.vxlan_id }}':
+                 flooding:
+                   enable: on
+                   multicast-group: {{ vni20.extras }}
+{% elif vlan == vlan30 %}
+             vni:
+               '{{ vni30.vxlan_id }}':
+                 flooding:
+                   enable: on
+                   multicast-group: {{ vni30.extras }}
+{% endif %}
+#}
+{% endif %}
+{% endfor %}
+{% endif -%}
+{% elif vlan10_border is defined and vlan20_border is defined and vlan30_border is defined %}
+          vlan:
+{% for vlan in vlans -%}
+{%- if not "hwaddress" in vlan %}
+            '{{ vlan.id }}':
+              vni:
+                '{{ vlan.id }}': {}
+{% endif -%}
+{% endfor -%}
+{% endif -%}

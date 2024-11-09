@@ -1,0 +1,84 @@
+[all:vars]
+ansible_user=cumulus
+ansible_ssh_pass=CumulusLinux!
+
+[dgx:vars]
+ansible_user=ubuntu
+ansible_ssh_pass=nvidia
+
+[storage:vars]
+ansible_user=ubuntu
+ansible_ssh_pass=nvidia
+
+[mgmt:vars]
+ansible_user=ubuntu
+ansible_ssh_pass=nvidia
+
+[bcm:vars]
+ansible_user=ubuntu
+ansible_ssh_pass=nvidia
+
+[leaf]
+leaf01
+leaf02
+
+[dgx]
+dgx01
+dgx02
+dgx03
+dgx04
+; dgx05
+; dgx06
+; dgx07
+; dgx08
+; dgx09
+; dgx10
+; dgx11
+; dgx12
+; dgx13
+; dgx14
+; dgx15
+; dgx16
+
+[storage]
+storage01
+storage02
+; storage03
+; storage04
+; storage05
+; storage06
+; storage07
+; storage08
+; storage09
+; storage10
+; storage11
+; storage12
+
+[bcm]
+bcm01
+bcm02
+
+[mgmt]
+k8s01
+k8s02
+k8s03
+
+[ipmi]
+ipmi01
+ipmi02
+
+[edge]
+edge01
+edge02
+
+[pod1:children]
+leaf
+dgx
+storage
+ipmi
+mgmt
+edge
+bcm
+
+[netq]
+netq-ts

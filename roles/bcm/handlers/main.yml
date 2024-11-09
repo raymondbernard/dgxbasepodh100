@@ -1,0 +1,20 @@
+---
+- name: netplan apply
+  become: true
+  command: netplan apply
+
+- name: restart sysctl
+  become: true
+  command: sysctl --system
+
+# - name: restart lldpd
+#   service:
+#     name: lldpd
+#     state: restarted
+#     enabled: true
+
+# - name: restart chrony
+#   service:
+#     name: chrony
+#     state: restarted
+#     enabled: true

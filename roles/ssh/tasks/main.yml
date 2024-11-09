@@ -1,0 +1,9 @@
+---
+- name: Configure a Session Timeout for Inactive Logins
+  copy:
+    content: 'TMOUT={{ ssh.timeout if ssh.timeout is defined else "900" }}'
+    dest: /etc/profile.d/session_timeout.sh
+    mode: 0644
+
+- name: Force all notified handlers to run at this point, not waiting for normal sync points
+  meta: flush_handlers

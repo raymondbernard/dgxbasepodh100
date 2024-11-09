@@ -1,0 +1,11 @@
+[leafs]
+leaf01
+leaf02
+
+[spines]
+spine01
+
+[switches:children]
+leafs
+spines
+

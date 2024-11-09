@@ -1,0 +1,8 @@
+      lo:
+        ip:
+          address:
+{% for loopback in loopback.ips|default('127.0.0.1') %}
+            {{ loopback }}: {}
+{% endfor %}
+        type: loopback
+

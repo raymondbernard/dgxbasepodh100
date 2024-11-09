@@ -1,0 +1,244 @@
+
+    evpn:
+      enable: on
+{% if evpn_mh is defined %}
+      multihoming:
+        enable: on
+        startup-delay: {{ evpn_mh.startup_delay }}
+{% endif %}
+{% if l2_vni_rd is defined %}
+      vni:
+{% for vlan in vlans %}
+        '{{ vlan.vxlan_id }}':
+          rd: {{ l2_vni_rd }}:{{ vlan.vxlan_id }}
+{% endfor %}
+{% endif %}
+    router:
+      bgp:
+        enable: on
+{% if graceful_restart is defined %}
+        graceful-restart:
+          mode: {{ graceful_restart.mode }}
+{%  endif %}
+{% if graceful_shutdown is true %}
+        graceful-shutdown: on
+{%  endif %}
+{% if routing_policies %}
+      policy:
+{% if prefix_list is defined %}
+        prefix-list:
+{% for list in prefix_list %}
+          {{ list.name }}:
+            rule:
+{% for rule in list.rules %}
+              '{{ rule.id }}':
+                action: {{ rule.action }}
+                match:
+{% if rule.max_prefix_len is defined %}
+                  {{ rule.match }}:
+                    max-prefix-len: {{ rule.max_prefix_len }}
+{% else %}
+                  {{ rule.match }}: {}
+{% endif %}
+{% endfor %}
+            type: {{ list.type }}
+{% endfor %}
+{%  endif %}
+{% if route_map is defined %}
+        route-map:
+{% for map in route_map %}
+          {{ map.name }}:
+            rule:
+{% for rule in map.rules %}
+              '{{ rule.id }}':
+                action:
+                  {{ rule.action }}: {}
+                description: {{ rule.description }}
+                match:
+                  {{ rule.match }}: {{ rule.match_param }}
+                  type: {{ rule.type }}
+{% endfor %}
+{% endfor %}
+{%  endif %}
+{%  endif %}
+    vrf:
+      default:
+        router:
+          bgp:
+            router-id: {{ bgp.router_id }}
+            autonomous-system: {{ bgp.asn }}
+            neighbor:
+{% for neighbor in bgp.neighbors %}
+              {{ neighbor.ip }}:
+                description: {{ neighbor.description }}
+                peer-group: {{ neighbor.peergroup }}
+                type: numbered
+{% endfor %}{# bgp.neighbors #}
+{# remove the overlay_neighbors if not EVPN #}
+{% for neighbor in bgp.overlay_neighbors %}
+              {{ neighbor.ip }}:
+                description: {{ neighbor.description }}
+                peer-group: {{ neighbor.peergroup }}
+                type: numbered
+{% endfor %}{# bgp.overlay_neighbors #}
+            enable: on
+            peer-group:
+{% for peergroup in bgp.peergroups|default() %}
+{% if peergroup.name != "ipmi_edge" %}
+              {{ peergroup.name }}:
+{% if peergroup.name == "underlay" %}
+{% if underlay_bfd is defined %}
+                bfd:
+                  detect-multiplier: {{ underlay_bfd.detect_multiplier }}
+                  enable: on
+                  min-rx-interval: {{ underlay_bfd.min_rx_interval }}
+                  min-tx-interval: {{ underlay_bfd.min_tx_interval }}
+{%  endif %}
+{% elif peergroup.name == "overlay" %}
+{% if overlay_bfd is defined %}
+                bfd:
+                  detect-multiplier: {{ overlay_bfd.detect_multiplier }}
+                  enable: on
+                  min-rx-interval: {{ overlay_bfd.min_rx_interval }}
+                  min-tx-interval: {{ overlay_bfd.min_tx_interval }}
+{%  endif %}
+                multihop-ttl: {{ peergroup.ttl }}
+                update-source: {{ peergroup.src }}
+{%  endif %}
+                description: {{ peergroup.description }}
+                remote-as: {{ peergroup.remote_as }}
+{% for address_family in bgp.address_family|default() %}
+{%     for neighbor in address_family.neighbors|default() %}
+{# only for evpn AF on onverlay peer-group #}
+{% if peergroup.name == "overlay" %}
+{% if address_family.name == "ipv4_unicast" %}
+{%       if neighbor.activate|default(False) %}
+                address-family:
+                  {{ address_family.name|replace('_', '-') }}:
+                    enable: off
+{%       endif %}
+{% elif address_family.name == "l2vpn_evpn" %}
+{%       if neighbor.activate|default(False) %}
+                  {{ address_family.name|replace('_', '-') }}:
+                    enable: on
+{%       if neighbor.rs_client|default(False) %}
+                    route-server-client: on
+{%       endif %}
+{%       endif %}
+{%       endif %}
+{%       endif %}
+{%     endfor %}{# address_family.neighbors #}
+{% endfor %}{# bgp.address_family #}
+{% endif %}
+{% endfor %}{# bgp.peergroups #}
+            address-family:
+{%   for address_family in bgp.address_family|default() %}
+{%     if address_family.name == "ipv4_unicast" %}
+              ipv4-unicast:
+{# ONLY FOR L3 FABRIC W/O EVPNs
+{% if inventory_hostname in groups['leaf'] %}
+                aggregate-route:
+                  {{ address_family.aggregate_address }}:
+                    summary-only: on
+{%       endif %}
+#}
+{%       for redistribute in address_family.redistribute|default() %}
+                redistribute:
+                  {{ redistribute.type }}:
+                    enable: on
+                    route-map: {{ redistribute.route_map }}
+                enable: on
+{%       endfor %}
+{%     elif address_family.name == "l2vpn_evpn" %}
+              l2vpn-evpn:
+                enable: on
+{%       endif %}
+{%   endfor %}{# bgp.address_family #}
+{% for vrf in bgp.vrfs|default() %}
+      {{ vrf.name }}:
+        router:
+          bgp:
+            autonomous-system: {{ bgp.asn }}
+            enable: on
+            rd: {{ bgp.vrf_params.router_id }}:{{ vrf.vni }}
+            router-id: {{ bgp.vrf_params.router_id }}
+{% if vrf.name == "inband_storage" %}
+            neighbor:
+{% for neighbor in bgp.ipmi_edge_neighbors %}
+              {{ neighbor.ip }}:
+                description: {{ neighbor.description }}
+                peer-group: {{ neighbor.peergroup }}
+                type: numbered
+{% endfor %}{# bgp.neighbors #}
+            path-selection:
+              multipath:
+                aspath-ignore: on
+            peer-group:
+{% for peergroup in bgp.peergroups|default() %}
+{% if peergroup.name == "ipmi_edge" %}
+              {{ peergroup.name }}:
+{% if underlay_bfd is defined %}
+                bfd:
+                  detect-multiplier: {{ underlay_bfd.detect_multiplier }}
+                  enable: on
+                  min-rx-interval: {{ underlay_bfd.min_rx_interval }}
+                  min-tx-interval: {{ underlay_bfd.min_tx_interval }}
+{%  endif %}
+                description: {{ peergroup.description }}
+                remote-as: {{ peergroup.remote_as }}
+{% endif %}
+{% endfor %}{# bgp.peergroups ipmi_edge #}
+{% endif %}
+            address-family:
+{%   for address_family in bgp.vrf_params.address_family|default() %}
+{%     if address_family.name == "ipv4_unicast" %}
+              ipv4-unicast:
+{% if vrf.name == "inband_storage" %}
+                aggregate-route:
+                  {{ address_family.aggregate_address_inband }}:
+                    summary-only: on
+{% else %}
+                aggregate-route:
+                  {{ address_family.aggregate_address }}:
+                    summary-only: on
+{%       endif %}
+{%       for redistribute in address_family.redistribute|default() %}
+                redistribute:
+                  {{ redistribute.type }}:
+                    enable: on
+{% if vrf.name == "inband_storage" %}
+                    route-map: {{ redistribute.route_map2 }}
+{% else %}
+                    route-map: {{ redistribute.route_map1 }}
+{%       endif %}
+{%       endfor %}{# address_family.redistribute #}
+                enable: on
+{% if vrf.name != "inband_storage" %}
+{%       for route_export in address_family.route_export|default() %}
+                route-export:
+                  {{ route_export.type }}:
+                    enable: on
+{%       endfor %}{# address_family.route_export #}
+{% endif %}
+{%     elif address_family.name == "l2vpn_evpn" %}
+              l2vpn-evpn:
+                enable: on
+{%     endif %}{# address_family.name #}
+{%   endfor %}{# vrf_paraps.address_family #}
+        evpn:
+          vni:
+            '{{ vrf.vni }}': {}
+          enable: on
+{%   endfor %}{# bgp.vrfs #}
+{% for vrf in vrfs|default() if vrf.routes is defined %}
+      {{ vrf.name }}:
+        router:
+{%     for route in vrf.routes|default() %}
+          static:
+            {{ route.prefix }}:
+              via:
+                {{ route.via }}:
+                  type: ipv4-address
+              address-family: ipv4-unicast
+{%     endfor %}{# vrf.routes #}
+{% endfor %}{# vrfs #}

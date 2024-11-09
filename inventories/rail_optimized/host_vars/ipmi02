@@ -1,0 +1,40 @@
+---
+id: 5
+eth0_id: 5
+sysmac: AA
+bgp_agg_route: "{{ sw_interconnect_underlay_subnet_prefix.pod01 }}.0.0/20"
+routing_policies: true
+prefix_list:
+  - name: ipmi_leaf_subnet
+    type: ipv4
+    rules: 
+      - id: 10 
+        action: permit
+        match: "{{ ipmi_leaf_subnet_prefix_summary_route }}"        
+        max_prefix_len: 31   
+route_map:
+  - name: ipmi_leaf_subnet
+    rules: 
+      - id: 10 
+        description: permit_ipmi_leaf_subnet
+        action: permit
+        match: ip-prefix-list
+        match_param: ipmi_leaf_subnet
+        type: ipv4
+graceful_restart:
+  mode: helper-only
+underlay_bfd:
+  detect_multiplier: 3
+  min_rx_interval: 300
+  min_tx_interval: 300 
+bgp_interfaces:  
+  swp49: 
+    ip: "{{ ipmi_leaf_subnet_prefix }}.3/31"
+    bgp_peer_ip: "{{ ipmi_leaf_subnet_prefix }}.2/31"
+    bgp_peer_int: swp29s1
+    bgp_neighbor: leaf01
+  swp50: 
+    ip: "{{ ipmi_leaf_subnet_prefix }}.7/31"
+    bgp_peer_ip: "{{ ipmi_leaf_subnet_prefix }}.6/31"
+    bgp_peer_int: swp29s1
+    bgp_neighbor: leaf02

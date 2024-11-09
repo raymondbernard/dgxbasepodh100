@@ -1,0 +1,101 @@
+- set:
+    interface:
+      lo:
+        ip:
+          address:
+            10.100.100.0/32: {}
+        type: loopback
+      swp49:
+        ip:
+          address:
+            10.150.0.1/31: {}
+        type: swp
+      swp50:
+        ip:
+          address:
+            10.150.0.5/31: {}
+        type: swp
+    router:
+      bgp:
+        autonomous-system: 65104
+        enable: on
+      policy:
+        route-map:
+          lo_subnet:
+            rule:
+              '10':
+                action:
+                  permit: {}
+                description: permit_lo_subnet
+                match:
+                  interface: lo
+                  type: ipv4
+    service:
+      dns:
+        mgmt:
+          server:
+            1.1.1.1: {}
+            8.8.8.8: {}
+      ntp:
+        mgmt:
+          server:
+            0.cumulusnetworks.pool.ntp.org:
+              iburst: on
+            1.cumulusnetworks.pool.ntp.org:
+              iburst: on
+            2.cumulusnetworks.pool.ntp.org:
+              iburst: on
+            3.cumulusnetworks.pool.ntp.org:
+              iburst: on
+      snmp-server:
+        enable: on
+        listening-address:
+          all:
+            vrf: mgmt
+          all-v6:
+            vrf: mgmt
+        readonly-community:
+          public:
+            access:
+              any: {}
+      syslog:
+        mgmt:
+          server:
+            192.168.200.1: {}
+    system:
+      hostname: ipmi01
+      message:
+        post-login: |-
+          #####################################################################################
+          #                  You are successfully logged in to: ipmi01                        #
+          #####################################################################################
+      timezone: Etc/UTC
+    vrf:
+      default:
+        router:
+          bgp:
+            address-family:
+              ipv4-unicast:
+                enable: on
+                redistribute:
+                  connected:
+                    enable: on
+                    route-map: lo_subnet
+            enable: on
+            neighbor:
+              10.150.0.0:
+                description: to-leaf01-swp29s0
+                peer-group: basepod
+                type: numbered
+              10.150.0.4:
+                description: to-leaf02-swp29s0
+                peer-group: basepod
+                type: numbered
+            path-selection:
+              multipath:
+                aspath-ignore: on
+            peer-group:
+              basepod:
+                remote-as: external
+            router-id: 10.10.10.4
+

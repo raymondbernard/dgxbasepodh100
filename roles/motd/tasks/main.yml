@@ -1,0 +1,10 @@
+---
+- name: Set MOTD on hosts
+  template:
+    src: motd.j2
+    dest: /etc/motd
+    mode: 0644
+  notify: restart ssh
+
+- name: Force all notified handlers to run at this point, not waiting for normal sync points
+  meta: flush_handlers

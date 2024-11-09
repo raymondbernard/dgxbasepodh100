@@ -1,0 +1,7 @@
+---
+- name: restart snmp
+  service:
+    name: snmp
+    state: restarted
+    enabled: true
+  changed_when: false

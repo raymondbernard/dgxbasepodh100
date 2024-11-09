@@ -1,0 +1,48 @@
+- set:
+    system:
+      config:
+        apply:
+          ignore:
+            /etc/cumulus/ports.conf: {}
+      hostname: {{ inventory_hostname }}
+{% if global_anycast_mac is defined %}
+      global:
+        anycast-mac: {{ global_anycast_mac }}
+{% endif %}
+{% if ntp.timezone is defined %}
+      timezone: {{ ntp.timezone }}
+{% endif %}
+{% include './features/message.j2' %}
+
+{% if vlans is defined %}
+{%   include './features/vlans.j2' %}
+{% endif %}
+{% if roce is defined %}
+{% include './features/roce.j2' %}
+{% endif %}
+{% if bgp is defined %}
+{% include './features/bgp.j2' %}
+{%- endif %}
+{% if vtep is true %}
+{%   include './features/nve.j2' %}
+{% endif %}
+
+    interface:
+{% include './features/eth0.j2' %}
+{% include './features/loopback.j2' %}
+{% include './features/swp.j2' %}
+{% if bonds is defined %}
+{%   include './features/bonds.j2' %}
+{% endif %}
+{% if mlag is defined %}
+{%   include './features/peerlink.j2' %}
+{% endif %}
+{%   include './features/svi.j2' %}
+{% include './features/services.j2' %}
+{% include './features/ntp_switch.j2' %}
+{% include './features/snmp_server.j2' %}
+
+{% include './features/syslog.j2' %}
+{% if mlag is defined %}
+{%   include './features/mlag.j2' %}
+{% endif %}

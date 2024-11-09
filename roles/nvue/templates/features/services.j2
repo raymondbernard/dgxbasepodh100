@@ -1,0 +1,8 @@
+    service:
+{% set vrf_str = dns.servers.vrf|string if dns.servers.vrf is defined else "default" %}
+      dns:
+        {{ vrf_str }}:
+          server:
+{% for server in dns.servers.ipv4|default([]) %}
+            {{ server }}: {}
+{% endfor %}

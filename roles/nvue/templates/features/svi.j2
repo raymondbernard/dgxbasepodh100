@@ -1,0 +1,32 @@
+{% for vlan in vlans %}
+{% if not "hwaddress" in vlan %}
+      {{ vlan.name }}:
+{%  for address in vlan.address|default() %}
+        ip:
+          address:
+            {{ address }}: {}
+{%  endfor %}
+{% if loopback.igmp is defined %}
+          igmp:
+            enable: on
+{% endif -%}           
+{%   for address in vlan.address_virtual|default() %}
+          vrr:
+            address:
+              {{ address.ip }}: {}
+            mac-address: {{ address.mac }}
+{%     endfor %}
+            state:
+              up: {}
+{%   if vlan.vrf is defined %}
+          vrf: {{ vlan.vrf }}
+{%   endif %}
+{% if pim is defined %}
+        router:
+          pim:
+            enable: on
+{% endif %}
+        vlan: {{ vlan.id }}
+        type: svi
+{% endif %}
+{% endfor %}

@@ -1,0 +1,7 @@
+    mlag:
+      peer-ip: linklocal
+      priority: {{ '1000' if mlag.priority == 'primary' else '32768' }}
+      mac-address: {{ mlag.sysmac }}
+      backup:
+        {{ mlag.backup }}: {}
+      init-delay: {{ mlag.init_delay|default('180')  }}

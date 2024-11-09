@@ -1,0 +1,370 @@
+---
+id: 1
+eth0_id: 2
+#vxlan_anycast_id: 12
+es_df_pref: 50000
+sysmac: AA
+#mlag_neighbor: leaf02
+#mlag_priority: primary
+vtep: true
+bgp_agg_route: "{{ sw_interconnect_underlay_subnet_prefix.pod01 }}.0.0/20"
+overlay:
+  peer_lo: "{{ hostvars['leaf02'].vxlan_local_loopback | ipaddr('address') }}"
+  peer_name: leaf02 
+routing_policies: true
+prefix_list:
+  - name: dgx_subnet
+    type: ipv4
+    rules: 
+      - id: 10 
+        action: permit
+        match: "{{ gpu_subnets_summary_route }}"        
+        max_prefix_len: 31
+  - name: inband_subnets
+    type: ipv4
+    rules: 
+      - id: 10 
+        action: permit
+        match: "{{ inband_subnets_summary_route }}"        
+        max_prefix_len: 24
+      # - id: 20 
+      #   action: permit
+      #   match: "{{ vxlan_local_loopback }}"
+      #   max_prefix_len: 32
+route_map:
+  - name: dgx_subnets
+    rules: 
+      - id: 10 
+        description: permit_dgx_subnet 
+        action: permit
+        match: ip-prefix-list
+        match_param: dgx_subnet
+        type: ipv4
+  - name: inband_subnets
+    rules: 
+      - id: 10 
+        description: permit_dgx_subnet 
+        action: permit
+        match: ip-prefix-list
+        match_param: inband_subnets
+        type: ipv4
+  - name: lo_subnet
+    rules: 
+      - id: 10 
+        description: permit_lo_subnet 
+        action: permit
+        match: interface
+        match_param: lo
+        type: ipv4
+graceful_restart:
+  mode: helper-only
+underlay_bfd:
+  detect_multiplier: 3
+  min_rx_interval: 300
+  min_tx_interval: 300
+overlay_bfd:
+  detect_multiplier: 3
+  min_rx_interval: 1000
+  min_tx_interval: 1000
+dgx_interfaces_ips:
+  swp1s0: "{{ gpu_subnets_perfix }}.1/31" 
+  swp1s1: "{{ gpu_subnets_perfix }}.5/31" 
+  swp1s2: "{{ gpu_subnets_perfix }}.9/31" 
+  swp1s3: "{{ gpu_subnets_perfix }}.13/31" 
+  swp2s0: "{{ gpu_subnets_perfix }}.17/31" 
+  swp2s1: "{{ gpu_subnets_perfix }}.21/31" 
+  swp2s2: "{{ gpu_subnets_perfix }}.25/31" 
+  swp2s3: "{{ gpu_subnets_perfix }}.29/31" 
+  swp3s0: "{{ gpu_subnets_perfix }}.33/31"
+  swp3s1: "{{ gpu_subnets_perfix }}.37/31"
+  swp3s2: "{{ gpu_subnets_perfix }}.41/31"
+  swp3s3: "{{ gpu_subnets_perfix }}.45/31"
+  swp4s0: "{{ gpu_subnets_perfix }}.49/31"
+  swp4s1: "{{ gpu_subnets_perfix }}.53/31"
+  swp4s2: "{{ gpu_subnets_perfix }}.57/31"
+  swp4s3: "{{ gpu_subnets_perfix }}.61/31"
+  # swp5s0: "{{ gpu_subnets_perfix }}.65/31"
+  # swp5s1: "{{ gpu_subnets_perfix }}.69/31"
+  # swp5s2: "{{ gpu_subnets_perfix }}.73/31"
+  # swp5s3: "{{ gpu_subnets_perfix }}.77/31"
+  # swp6s0: "{{ gpu_subnets_perfix }}.81/31"
+  # swp6s1: "{{ gpu_subnets_perfix }}.85/31"
+  # swp6s2: "{{ gpu_subnets_perfix }}.89/31"
+  # swp6s3: "{{ gpu_subnets_perfix }}.93/31"
+  # swp7s0: "{{ gpu_subnets_perfix }}.97/31"
+  # swp7s1: "{{ gpu_subnets_perfix }}.101/31"
+  # swp7s2: "{{ gpu_subnets_perfix }}.105/31"
+  # swp7s3: "{{ gpu_subnets_perfix }}.109/31"
+  # swp8s0: "{{ gpu_subnets_perfix }}.113/31"
+  # swp8s1: "{{ gpu_subnets_perfix }}.117/31"
+  # swp8s2: "{{ gpu_subnets_perfix }}.121/31"
+  # swp8s3: "{{ gpu_subnets_perfix }}.125/31"
+  # swp9s0: "{{ gpu_subnets_perfix }}.129/31"
+  # swp9s1: "{{ gpu_subnets_perfix }}.133/31"
+  # swp9s2: "{{ gpu_subnets_perfix }}.137/31"
+  # swp9s3: "{{ gpu_subnets_perfix }}.141/31"
+  # swp10s0: "{{ gpu_subnets_perfix }}.145/31"
+  # swp10s1: "{{ gpu_subnets_perfix }}.149/31"
+  # swp10s2: "{{ gpu_subnets_perfix }}.153/31"
+  # swp10s3: "{{ gpu_subnets_perfix }}.157/31"
+  # swp11s0: "{{ gpu_subnets_perfix }}.161/31"
+  # swp11s1: "{{ gpu_subnets_perfix }}.165/31"
+  # swp11s2: "{{ gpu_subnets_perfix }}.169/31"
+  # swp11s3: "{{ gpu_subnets_perfix }}.173/31"
+  # swp12s0: "{{ gpu_subnets_perfix }}.177/31"
+  # swp12s1: "{{ gpu_subnets_perfix }}.181/31"
+  # swp12s2: "{{ gpu_subnets_perfix }}.185/31"
+  # swp12s3: "{{ gpu_subnets_perfix }}.189/31"
+  # swp13s0: "{{ gpu_subnets_perfix }}.193/31"
+  # swp13s1: "{{ gpu_subnets_perfix }}.197/31"
+  # swp13s2: "{{ gpu_subnets_perfix }}.201/31"
+  # swp13s3: "{{ gpu_subnets_perfix }}.205/31"
+  # swp14s0: "{{ gpu_subnets_perfix }}.209/31"
+  # swp14s1: "{{ gpu_subnets_perfix }}.213/31"
+  # swp14s2: "{{ gpu_subnets_perfix }}.217/31"
+  # swp14s3: "{{ gpu_subnets_perfix }}.221/31"
+  # swp15s0: "{{ gpu_subnets_perfix }}.225/31"
+  # swp15s1: "{{ gpu_subnets_perfix }}.229/31"
+  # swp15s2: "{{ gpu_subnets_perfix }}.233/31"
+  # swp15s3: "{{ gpu_subnets_perfix }}.237/31"
+  # swp16s0: "{{ gpu_subnets_perfix }}.241/31"
+  # swp16s1: "{{ gpu_subnets_perfix }}.245/31"
+  # swp16s2: "{{ gpu_subnets_perfix }}.249/31"
+  # swp16s3: "{{ gpu_subnets_perfix }}.253/31"
+bgp_interfaces:  
+  swp29s0:
+    ip: "{{ ipmi_leaf_subnet_prefix }}.0/31"
+    bgp_peer_ip: "{{ ipmi_leaf_subnet_prefix }}.1/31"
+    bgp_peer_int: swp49
+    bgp_neighbor: ipmi01
+  swp29s1:
+    ip: "{{ ipmi_leaf_subnet_prefix }}.2/31"
+    bgp_peer_ip: "{{ ipmi_leaf_subnet_prefix }}.3/31"
+    bgp_peer_int: swp49
+    bgp_neighbor: ipmi02
+  swp45:
+    ip: "{{ edge_subnet_prefix }}.0/31"
+    bgp_peer_ip: "{{ edge_subnet_prefix }}.1/31"
+    bgp_peer_int: swp1
+    bgp_neighbor: edge01
+  swp46:
+    ip: "{{ edge_subnet_prefix }}.2/31"
+    bgp_peer_ip: "{{ edge_subnet_prefix }}.3/31"
+    bgp_peer_int: swp1
+    bgp_neighbor: edge02  
+  # swp47:
+  #   ip: "{{ sw_interconnect_underlay_subnet_prefix }}.0/31"
+  #   bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.1/31"
+  #   bgp_peer_int: swp47
+  #   bgp_neighbor: leaf02
+  # swp48: 
+  #   ip: "{{ sw_interconnect_underlay_subnet_prefix }}.2/31"
+  #   bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.3/31"  
+  #   bgp_peer_int: swp48
+  #   bgp_neighbor: leaf02
+  # swp49: 
+  #   ip: "{{ sw_interconnect_underlay_subnet_prefix }}.4/31"
+  #   bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.5/31"
+  #   bgp_peer_int: swp49
+  #   bgp_neighbor: leaf02
+  # swp50: 
+  #   ip: "{{ sw_interconnect_underlay_subnet_prefix }}.6/31"
+  #   bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.7/31"
+  #   bgp_peer_int: swp50
+  #   bgp_neighbor: leaf02
+  # swp51: 
+  #   ip: "{{ sw_interconnect_underlay_subnet_prefix }}.8/31"
+  #   bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.9/31"
+  #   bgp_peer_int: swp51
+  #   bgp_neighbor: leaf02
+  # swp52: 
+  #   ip: "{{ sw_interconnect_underlay_subnet_prefix }}.10/31"
+  #   bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.11/31"
+  #   bgp_peer_int: swp52
+  #   bgp_neighbor: leaf02
+  # swp53: 
+  #   ip: "{{ sw_interconnect_underlay_subnet_prefix }}.12/31"
+  #   bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.13/31"
+  #   bgp_peer_int: swp53
+  #   bgp_neighbor: leaf02
+  # swp54: 
+  #   ip: "{{ sw_interconnect_underlay_subnet_prefix }}.14/31"
+  #   bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.15/31"
+  #   bgp_peer_int: swp54
+  #   bgp_neighbor: leaf02
+  # swp55: 
+  #   ip: "{{ sw_interconnect_underlay_subnet_prefix }}.16/31"
+  #   bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.17/31"
+  #   bgp_peer_int: swp55
+  #   bgp_neighbor: leaf02
+  # swp56: 
+  #   ip: "{{ sw_interconnect_underlay_subnet_prefix }}.18/31"
+  #   bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.19/31"
+  #   bgp_peer_int: swp56
+  #   bgp_neighbor: leaf02
+  # swp57: 
+  #   ip: "{{ sw_interconnect_underlay_subnet_prefix }}.20/31"
+  #   bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.21/31"
+  #   bgp_peer_int: swp57
+  #   bgp_neighbor: leaf02
+  # swp58: 
+  #   ip: "{{ sw_interconnect_underlay_subnet_prefix }}.22/31"
+  #   bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.23/31"
+  #   bgp_peer_int: swp58
+  #   bgp_neighbor: leaf02
+  # swp59: 
+  #   ip: "{{ sw_interconnect_underlay_subnet_prefix }}.24/31"
+  #   bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.25/31"
+  #   bgp_peer_int: swp59
+  #   bgp_neighbor: leaf02
+  # swp60: 
+  #   ip: "{{ sw_interconnect_underlay_subnet_prefix }}.26/31"
+  #   bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.27/31"
+  #   bgp_peer_int: swp60
+  #   bgp_neighbor: leaf02
+  swp61: 
+    ip: "{{ sw_interconnect_underlay_subnet_prefix }}.28/31"
+    bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.29/31"
+    bgp_peer_int: swp61
+    bgp_neighbor: leaf02
+  swp62: 
+    ip: "{{ sw_interconnect_underlay_subnet_prefix }}.30/31"
+    bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.31/31"
+    bgp_peer_int: swp62
+    bgp_neighbor: leaf02
+  swp63: 
+    ip: "{{ sw_interconnect_underlay_subnet_prefix }}.32/31"
+    bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.33/31"
+    bgp_peer_int: swp63
+    bgp_neighbor: leaf02
+  swp64: 
+    ip: "{{ sw_interconnect_underlay_subnet_prefix }}.34/31"
+    bgp_peer_ip: "{{ sw_interconnect_underlay_subnet_prefix }}.35/31"
+    bgp_peer_int: swp64
+    bgp_neighbor: leaf02
+roce:
+  mode: lossless
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

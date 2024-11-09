@@ -1,0 +1,17 @@
+{% if inventory_hostname in groups['bcm'] %}
+#########################################################
+#      You are successfully logged in to: {{ inventory_hostname }}         #
+#########################################################
+{% elif inventory_hostname in groups['mgmt'] %}
+#########################################################
+#      You are successfully logged in to: {{ inventory_hostname }}         #
+#########################################################
+{% elif inventory_hostname in groups['storage'] %}
+#########################################################
+#      You are successfully logged in to: {{ inventory_hostname }}     #
+#########################################################
+{% elif inventory_hostname in groups['dgx'] %}
+#########################################################
+#      You are successfully logged in to: {{ inventory_hostname }}         #
+#########################################################
+{% endif %}

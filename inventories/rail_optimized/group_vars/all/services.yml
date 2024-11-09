@@ -1,0 +1,50 @@
+---
+backup:
+  path: "../inventories/{{ fabric_name }}/config/{{ inventory_hostname }}" 
+backup_switch:
+  files:
+    - "/etc/nvue.d/startup.yaml" #single startup-config file
+backup_host:
+  files:
+    - "/etc/network/mgmt_interface.yaml"
+    - "/etc/network/gpu_port.yaml"
+dns:
+  domain: cumulusnetworks.com
+  search_domain:
+    - cumulusnetworks.com
+  servers:
+    ipv4:
+      - "1.1.1.1"
+      - "8.8.8.8"
+    vrf: mgmt
+snmp_server:
+  listening_address:
+    - "all"
+    - "all-v6"
+  rocommunity: public
+  rocommunity_access: any
+  vrf: mgmt
+syslog:
+  servers:
+    - 192.168.200.1
+ntp:
+  timezone: Etc/UTC
+  server_ips:
+    - 0.cumulusnetworks.pool.ntp.org
+    - 1.cumulusnetworks.pool.ntp.org
+    - 2.cumulusnetworks.pool.ntp.org
+    - 3.cumulusnetworks.pool.ntp.org
+ssh:
+  motd: |
+    ##################################################################
+    #   You are successfully logged in to: {{ inventory_hostname }}           #
+    ##################################################################
+netq:
+  version: latest
+  agent_server: 192.168.200.250
+  cli_server: api.air.netq.cumulusnetworks.com
+  cli_access_key: long-key-0987654321
+  cli_secret_key: long-key-1234567890
+  cli_premises: CITC
+  cli_port: 443
+

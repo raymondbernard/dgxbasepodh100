@@ -1,0 +1,11 @@
+---
+inband_mgmt:
+  nics: [eth1, eth2]
+  bonds:
+    - name: bond0
+      mode: 802.3ad
+      rate: fast
+      ip: "{{ inband_mgmt_and_storage_subnet_prefix }}.100/24"
+ #    route: 
+ #      dest: "{{ gpu_subnets_summary_route }}"
+ #      nexthop: "{{ hostvars['leaf01'].dgx_interfaces_ips.swp1s0 }}"

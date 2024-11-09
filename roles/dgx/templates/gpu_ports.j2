@@ -1,0 +1,23 @@
+network:
+  renderer: networkd
+  ethernets:
+{% for nic in gpu_nics %}
+    {{ nic }}:
+      addresses:
+        - {{ gpu_nics[nic].ip }}
+      routes:
+        - to: {{ gpu_nics[nic].route.dest }}
+          via: {{ gpu_nics[nic].route.nexthop | ipaddr('address') }}
+          metric: 1
+{#
+      routing-policy:
+        - from: {{ gpu_nics[nic].ip | ipaddr('address') }}
+          table: {{ gpu_nics[nic].route.table }}
+#}
+      dhcp4: no
+{# #In case will need to match to MAC on the port and rename nic
+     match:
+              macaddress: {{ gpu_nics[nic].mac }}
+      set-name: {{ nic }}
+#}
+{% endfor %}

@@ -1,0 +1,8 @@
+---
+- name: apply nvue changes
+  become: true
+  command: nv config apply /etc/nvue.d/startup.yaml
+
+- name: restart netq-agent
+  become: true
+  command: netq config restart agent
