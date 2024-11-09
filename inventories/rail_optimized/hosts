@@ -28,8 +28,9 @@ ansible_become_password=Nvidia1965
 
 
 [leaf]
-leaf01
-leaf02
+leaf01 ansible_host=192.168.200.2
+leaf02 ansible_host=192.168.200.3  # Adjust this if needed based on `leaf02` configuration
+
 
 [dgx]
 dgx01
