@@ -21,7 +21,7 @@ ansible_ssh_pass=nvidia
 
 [leaf:vars]
 ansible_user=cumulus
-ansible_user=cumulus
+ansible_ssh_pass=Nvidia1965
 
 
 [leaf]
