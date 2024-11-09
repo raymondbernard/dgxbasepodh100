@@ -49,9 +49,14 @@ The N/S network requires layer 2 connectivity for DGX management, BCM, k8s, and 
 
 <!-- AIR:page -->
 sudo apt-get update
-sudo apt-get install python3-pip -y  # Ensure pip is installed
-sudo pip3 install netaddr
+sudo pip install netaddr
 
+```
+git clone https://github.com/raymondbernard/dgxbasepodh100.git
+cd dgxbasepodh100
+ansible-playbook playbooks/basepod_config.yml -i inventories/rail_optimized/hosts
+
+```
 ## Demo devices and IP addressing 
 
 ### Devices
