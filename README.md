@@ -48,6 +48,9 @@ To enable a multi-tenant infrastructure, we use pure Type 5 EVPN routes – so t
 The N/S network requires layer 2 connectivity for DGX management, BCM, k8s, and storage nodes. We use [EVPN Multihoming](https://docs.nvidia.com/networking-ethernet-software/cumulus-linux/Network-Virtualization/Ethernet-Virtual-Private-Network-EVPN/EVPN-Multihoming/) and [Virtual Router Redundancy - VRR](https://docs.nvidia.com/networking-ethernet-software/cumulus-linux/Layer-2/Virtual-Router-Redundancy-VRR/) to eliminate the need for a proprietary [MLAG](https://docs.nvidia.com/networking-ethernet-software/cumulus-linux/Layer-2/Multi-Chassis-Link-Aggregation-MLAG/) deployment. Using this deployment type, the switch interconnect ports (green) are routed underlay ports with ECMP and serve all networks (VRFs) without dedicating them to a specific purpose like MLAG peerlink.
 
 <!-- AIR:page -->
+sudo apt-get update
+sudo apt-get install python3-pip -y  # Ensure pip is installed
+sudo pip3 install netaddr
 
 ## Demo devices and IP addressing 
 
