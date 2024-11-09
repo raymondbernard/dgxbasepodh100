@@ -1,5 +1,5 @@
 ---
-inbnad_nics:
+inband_nics:
   eth1:
     ip: "{{ vlan121_subnet|nthhost( 253 ) }}/{{ vlan121_subnet|ipaddr( 'prefix' ) }}"
     route: 
