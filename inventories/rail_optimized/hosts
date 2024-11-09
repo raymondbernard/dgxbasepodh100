@@ -1,6 +1,6 @@
 [all:vars]
 ansible_user=cumulus
-ansible_ssh_pass=CumulusLinux!
+ansible_ssh_pass=cumulus
 
 [dgx:vars]
 ansible_user=ubuntu
@@ -80,5 +80,5 @@ mgmt
 edge
 bcm
 
-[netq]
-netq-ts
+;[netq]
+;netq-ts
